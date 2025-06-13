@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <title>Gestionar Categorías</title>
+    <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+    <link rel="icon" href="{% static 'icon/Malekith.png' %}" type="image/x-icon">
+</head>
+<body>
+    <header>
+        <nav class="contenedor">
+            <img src="{% static 'icon/Malekith-white.png' %}" alt="logo" class="logo">
+            <a href="{% url 'admin_view2' %}">Volver</a>
+        </nav>
+    </header>
+    <main>
+        <section>
+            <h1 class="admin-title">Gestionar Categorías</h1>
+            <p class="admin-description">Desde aquí puedes gestionar las categorías de tu sitio.</p>
+
+            
+
+            <a href="{% url 'categoria_create' %}" class="add-button">Crear Nueva Categoría</a>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre de Categoría</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for categoria in categorias %}
+                        <tr>
+                            <td>{{ categoria.id_categoria }}</td>
+                            <td>{{ categoria.nombre_categoria }}</td>
+                            <td class="action-buttons">
+                                <a href="{% url 'categoria_update' categoria.id_categoria %}" class="edit-btn" style="padding: 13px 26px;">Editar</a>
+                                <form action="{% url 'categoria_delete' categoria.id_categoria %}" method="post" style="display:inline; padding: 0;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="delete-btn" onclick="return confirm('¿Estás seguro de que quieres eliminar esta categoría? Esto podría afectar productos asociados.')">Eliminar</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3">No hay categorías registradas.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

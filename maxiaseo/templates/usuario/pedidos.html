@@ -1,0 +1,51 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Mis Pedidos</title>
+    <link rel="stylesheet" href="{% static 'css/pedidos.css' %}">
+</head>
+<body>
+    <a href="{% url 'inicio' %}" class="volver">Volver</a>
+    <div class="pedidos-container">
+        <h2>Mis Pedidos</h2>
+
+        {% if pedidos %}
+            <table class="tabla-pedidos">
+                <thead>
+                    <tr>
+                        <th>ID Pedido</th>
+                        <th>Fecha</th>
+                        <th>Estado</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for pedido in pedidos %}
+                        <tr>
+                            <td>{{ pedido.id_pedido }}</td>
+                            <td>{{ pedido.fecha_Creacion|date:"d/m/Y H:i" }}</td>
+                            <td>{{ pedido.estado_pedido }}</td>
+                            <td>${{ pedido.total_pedido }}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4">
+                                <strong>Productos:</strong>
+                                <ul>
+                                    {% for p in pedido.productos.all %}
+                                        <li>{{ p.id_producto.nombre }} – Cantidad: {{ p.cantidad }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+                
+            </table>
+        {% else %}
+            <p>No has realizado pedidos aún.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

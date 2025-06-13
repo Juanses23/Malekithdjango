@@ -1,0 +1,69 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Mi Perfil</title>
+    <link rel="stylesheet" href="{% static 'css/perfil.css' %}">
+</head>
+<body>
+    <a href="{% url 'inicio' %}" class="volver">Volver</a>
+    <div class="perfil-container">
+        <h2>Mi perfil</h2>
+        <form id="perfil-form" method="POST">
+            {% csrf_token %}
+            
+            <div class="campo">
+                <label>Cédula:</label>
+                <span>{{ usuario.cedula }}</span>
+            </div>
+            
+            <div class="campo">
+                <label>Nombre:</label>
+                <input type="text" name="nombre" id="nombre" value="{{ usuario.nombre }}" readonly>
+                <button type="button" onclick="habilitarCampo('nombre')">Editar</button>
+                <button type="submit" name="guardar_nombre" style="display: none;">Guardar</button>
+            </div>
+
+            <div class="campo">
+                <label>Apellido:</label>
+                <input type="text" name="apellido" id="apellido" value="{{ usuario.apellido }}" readonly>
+                <button type="button" onclick="habilitarCampo('apellido')">Editar</button>
+                <button type="submit" name="guardar_apellido" style="display: none;">Guardar</button>
+            </div>
+
+            <div class="campo">
+                <label>Celular:</label>
+                <input type="text" name="telefono" id="telefono" value="{{ usuario.telefono }}" readonly>
+                <button type="button" onclick="habilitarCampo('telefono')">Editar</button>
+                <button type="submit" name="guardar_telefono" style="display: none;">Guardar</button>
+            </div>
+
+            <div class="campo">
+                <label>Correo:</label>
+                <span>{{ usuario.email }}</span>
+            </div>
+            <div class="campo">
+                <label>Dirección:</label>
+                <input type="text" name="direccion" id="direccion" value="{{ usuario.direccion }}" readonly>
+                <button type="button" onclick="habilitarCampo('direccion')">Editar</button>
+                <button type="submit" name="guardar_direccion" style="display: none;">Guardar</button>
+            </div>
+        
+            <div class="campo">
+                <label>Ciudad:</label>
+                <input type="text" name="ciudad" id="ciudad" value="{{ usuario.ciudad }}" readonly>
+                <button type="button" onclick="habilitarCampo('ciudad')">Editar</button>
+                <button type="submit" name="guardar_ciudad" style="display: none;">Guardar</button>
+            </div>
+            <div class="campo">
+                <label>Fecha de nacimiento:</label>
+                <span>{{ usuario.fecha_nacimiento }}</span>
+            </div>
+        </form>
+    </div>
+    
+
+    <script src="{% static 'js/editar_perfil.js' %}"></script>
+</body>
+</html>

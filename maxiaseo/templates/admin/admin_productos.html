@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <title>Gestionar Productos</title>
+    <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+    <link rel="icon" href="{% static 'icon/Malekith.png' %}" type="image/x-icon">
+</head>
+<body>
+    <header>
+        <nav class="contenedor">
+            <img src="{% static 'icon/Malekith-white.png' %}" alt="logo" class="logo">
+            <a href="{% url 'admin_view2' %}">Volver</a>
+        </nav>
+    </header>
+    <main>
+        <section>
+            <h1 class="admin-title">Gestionar Productos</h1>
+            <p class="admin-description">Desde aquí puedes gestionar los productos de tu sitio.</p>
+
+
+            <a href="{% url 'producto_create' %}" class="add-button">Crear Nuevo Producto</a>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Descripción</th>
+                            <th>Cantidad</th>
+                            <th>Valor</th>
+                            <th>Imagen</th>
+                            <th>Categoría</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for producto in productos %}
+                        <tr>
+                            <td>{{ producto.id_producto }}</td>
+                            <td>{{ producto.descripcion_producto }}</td>
+                            <td>{{ producto.cantidad_producto }}</td>
+                            <td>${{ producto.valor_producto|floatformat:2 }}</td> {# Formatea a 2 decimales #}
+                            <td>
+                                {% if producto.imagen %}
+                                    <img src="{% static 'img/' %}{{ producto.imagen }}" alt="{{ producto.descripcion_producto }}" style="max-width: 50px; max-height: 50px;">
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </td>
+                            <td>{{ producto.id_categoria.nombre_categoria }}</td>
+                            <td class="action-buttons">
+                                <a href="{% url 'producto_update' producto.id_producto %}" class="edit-btn" style="padding: 13px 26px;">Editar</a>
+                                <form action="{% url 'producto_delete' producto.id_producto %}" method="post" style="display:inline; padding: 0;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="delete-btn" onclick="return confirm('¿Estás seguro de que quieres eliminar este producto?')" style="padding: 13px 26px;">Eliminar</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7">No hay productos registrados.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

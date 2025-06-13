@@ -1,0 +1,96 @@
+{% load static %}
+{% load custom_filters %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tienda Maxiaseo</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/tienda.css' %}">
+    <link rel="icon" href="{% static 'icon/Malekith.png' %}" type="image/x-icon">
+</head>
+<body>
+    <header>
+        <nav class="contenedor">
+            <img src="{% static 'icon/Malekith-white.png' %}" alt="logo" class="logo">
+            <a href="{% url 'inicio' %}">Inicio</a>
+            <a href="{% url 'nuestra_empresa' %}">Nuestra empresa</a>
+            <a href="{% url 'productos' %}">Tienda</a>
+
+            {% if request.session.user_name %}
+                
+                <a href="{% url 'logout' %}" class="logout-button">Cerrar sesión</a>
+                <div class="dropdown">
+                    <a href="#" id="userMenuToggle">Hola, {{ request.session.user_name }}</a>
+                    <div class="dropdown-menu" id="userMenu">
+                        <a href="{% url 'pedidos' %}">Pedidos</a>
+                        <a href="{% url 'perfil' %}">Perfil</a>
+                    </div>
+                    <a href="{% url 'carrito_view' %}">Carrito</a>
+                </div>
+            {% else %}
+                <a href="{% url 'login' %}">Iniciar sesión</a>
+            {% endif %}
+        </nav>
+    </header>
+    
+    <main>
+        <section class="filter-buttons">
+                       
+            {# Formulario para el select de categorías #}
+            <form method="get" action="{% url 'productos' %}" style="display: inline-block;">
+                <select name="categoria" onchange="this.form.submit()">
+                    <option value="0">Seleccionar...</option>
+                    {% for categoria in categorias %}
+                        <option value="{{ categoria.id_categoria }}" 
+                                {% if categoria_seleccionada == categoria.id_categoria %}selected{% endif %}>
+                            {{ categoria.nombre_categoria }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </form>
+        </section>
+        
+        <section class="product-list">
+            {% for producto in productos %}
+                <form method="post" action="{% url 'carrito_view' %}?id={{ producto.id_producto }}" class="product">
+                    {% csrf_token %} 
+                    <img src="{% static 'img/' %}{{ producto.imagen }}" alt="{{ producto.descripcion_producto }}">
+                    <h2>{{ producto.descripcion_producto }}</h2>
+                    <span class="valor">${{ producto.valor_producto|floatformat:2 }}</span> {# Formatea el precio a 2 decimales #}
+                    <div class="input-box">
+                        <label for="cantidad-{{ producto.id_producto }}" class="quantity-label">Cantidad:</label>
+                        <select class="quantity" name="cantidad" id="cantidad-{{ producto.id_producto }}" required>
+                            {% for i in producto.cantidad_producto|times %} {# Usamos un filtro personalizado 'times' #}
+                                <option value="{{ forloop.counter }}">{{ forloop.counter }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    {# Campos ocultos para enviar datos del producto al carrito #}
+                    <input type="hidden" name="id_producto" value="{{ producto.id_producto }}">
+                    <input type="hidden" name="nombre" value="{{ producto.descripcion_producto }}">
+                    <input type="hidden" name="precio" value="{{ producto.valor_producto }}">
+                    
+                    <input type="submit" name="add_to_cart" class="btn" value="Añadir al carrito">
+                </form>
+            {% empty %}
+                <p>No hay productos disponibles en esta categoría.</p>
+            {% endfor %}
+        </section>
+    </main>
+    
+    <footer>
+        <p>Síguenos en nuestras redes sociales:</p>
+        <div class="social-media">
+            <a href="https://www.instagram.com"><img src="{% static 'icon/logotipo-de-instagram.png' %}" alt="Instagram" class="icono"></a>
+            <a href="https://www.facebook.com"><img src="{% static 'icon/facebook.png' %}" alt="Facebook" class="icono"></a>
+            <a href="https://www.twitter.com"><img src="{% static 'icon/gorjeo.png' %}" alt="Twitter" class="icono"></a>
+        </div>
+        <p>Contacto: +57 123 456 7890</p>
+        <p>&copy; 2024 Malekith. Todos los derechos reservados.</p>
+    </footer>
+    <script src="{% static 'js/menu.js' %}"></script>
+</body>
+</html>

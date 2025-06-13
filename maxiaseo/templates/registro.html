@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear cuenta</title>
+    {% load static %} {# Carga de archivos estáticos en Django #}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}">
+    <link rel="icon" href="{% static 'icon/Malekith.png' %}" type="image/x-icon">
+    <style type="text/css">
+        body {
+            background-image: url("{% static 'img/productosaseoanimado3.png' %}");
+            background-size: cover;       /* Ajusta la imagen al tamaño de la ventana */
+            background-repeat: no-repeat; /* Evita que se repita */
+            background-position: center;  /* Centra la imagen */
+        }
+        .box {
+            border-color: var(--glass-bg-col);
+            border: 1px solid seagreen;
+            padding: 40px 50px;
+            border-radius: 20px;
+            backdrop-filter: var(--blur);
+            background-color: rgba(255, 255, 255, 0.70);
+        }
+    </style>
+</head>
+<body>
+    <a href="{% url 'login' %}" class="volver">Volver</a>
+    <section class="form-main">
+        <div class="form-content">
+            <div class="box">
+                <h3>Crea tu cuenta</h3>
+                <form action="{% url 'registro' %}" method="POST">
+                    {% csrf_token %} {# ¡Importante! Token CSRF para seguridad en Django #}
+                    <input type="hidden" name="accion" value="registro">
+                    
+                    {# Mostrar mensajes de error o éxito #}
+                    
+                    {#{% if messages %}#}
+                    {#    <ul class="messages" style="list-style-type: none; padding: 0;">#}
+                    {#        {% for message in messages %}#}
+                    {#            <li{% if message.tags %} class="{{ message.tags }}"{% endif %} style="color:red;">{{ message }}</li>#}
+                    {#        {% endfor %}#}
+                    {#    </ul>#}
+                    {#{% endif %}#}
+
+                    <div class="input-box">
+                        <input type="text" name="nombre" placeholder="Nombres" class="input-control" required value="{{ request.POST.nombre }}">
+                    </div>
+                    <div class="input-box">
+                        <input type="text" name="apellido" placeholder="Apellidos" class="input-control" required value="{{ request.POST.apellido }}">
+                    </div>
+                    <div class="input-box">
+                        Fecha de nacimiento
+                        <input type="date" name="fecha_nacimiento" placeholder="Fecha de nacimiento" class="input-control" required value="{{ request.POST.fecha_nacimiento }}">
+                    </div>
+                    <div class="input-box">
+                        <input type="text" name="cedula" placeholder="Cédula" class="input-control" required value="{{ request.POST.cedula }}">
+                    </div>
+                    <div class="input-box">
+                        <input type="text" name="ciudad" placeholder="Ciudad" class="input-control" value="{{ request.POST.ciudad }}">
+                    </div>
+                    <div class="input-box">
+                        <input type="email" name="email" placeholder="Correo" class="input-control" required value="{{ request.POST.email }}">
+                    </div>
+                    <div class="input-box">
+                        <input type="text" name="direccion" placeholder="Dirección" class="input-control" value="{{ request.POST.direccion }}">
+                    </div>
+                    <div class="input-box">
+                        <input type="text" name="telefono" placeholder="Celular" class="input-control" value="{{ request.POST.telefono }}">
+                    </div>
+                    <div class="input-box">
+                        <input type="password" name="password" placeholder="Contraseña" class="input-control" required>
+                    </div>
+                    <div class="input-box">
+                        <input type="password" name="reppassword" placeholder="Repite la Contraseña" class="input-control" required>
+                    </div>
+                    <button type="submit" class="btn">Crear cuenta</button>                    
+                </form>                
+            </div>
+        </div>
+    </section>
+</body>
+</html>

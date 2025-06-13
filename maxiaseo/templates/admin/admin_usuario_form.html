@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+    <link rel="icon" href="{% static 'icon/Malekith.png' %}" type="image/x-icon">
+</head>
+<body>
+    <header>
+        <nav class="contenedor">
+            <img src="{% static 'icon/Malekith-white.png' %}" alt="logo" class="logo">
+            <a href="{% url 'admin_usuarios' %}">Volver a Usuarios</a>
+        </nav>
+    </header>
+    <main>
+        <section>
+            <h1 class="admin-title">{{ title }}</h1>
+            <p class="admin-description">Completa el formulario para {{ title|lower }}.</p>
+
+            
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }} {# Esto renderiza todos los campos del formulario como párrafos #}
+                <button type="submit">Guardar Usuario</button>
+            </form>
+        </section>
+    </main>
+</body>
+</html>

@@ -1,0 +1,28 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <title>Gestionar Proveedores</title>
+    <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+    <link rel="icon" href="{% static 'icon/Malekith.png' %}" type="image/x-icon">
+</head>
+<body>
+    <header>
+        <nav class="contenedor">
+            <img src="{% static 'icon/Malekith-white.png' %}" alt="logo" class="logo">
+            <a href="{% url 'admin_view' %}">Volver</a>
+           
+            
+        </nav>
+    </header>
+    <main>
+        <section>
+            <h1>Gestionar Proveedores</h1>
+            <p>Desde aquí puedes gestionar los proveedores de tu sitio.</p>
+        </section>
+    </main>
+</body>
+</html>

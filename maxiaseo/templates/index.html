@@ -1,0 +1,57 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagina principal</title>
+    <link rel="stylesheet" href="{% static 'css/index.css' %}">
+    <link rel="icon" href="{% static 'icon/Malekith.png' %}" type="image/x-icon">
+</head>
+<body>
+    <header>
+        <nav class="contenedor">
+            <img src="{% static 'icon/Malekith-white.png' %}" alt="logo" class="logo">
+            <a href="{% url 'inicio' %}">Inicio</a>
+            <a href="{% url 'nuestra_empresa' %}">Nuestra empresa</a>
+            <a href="{% url 'productos' %}">Tienda</a>
+
+            {% if request.session.user_name %}
+                
+                <a href="{% url 'logout' %}" class="logout-button">Cerrar sesión</a>
+                <div class="dropdown">
+                    <a href="#" id="userMenuToggle">Hola, {{ request.session.user_name }}</a>
+                    <div class="dropdown-menu" id="userMenu">
+                        <a href="{% url 'pedidos' %}">Pedidos</a>
+                        <a href="{% url 'perfil' %}">Perfil</a>
+                    </div>
+                </div>
+            {% else %}
+                <a href="{% url 'login' %}">Iniciar sesión</a>
+            {% endif %}
+        </nav>
+    </header>
+    <section class="contenedor-slider">
+        <div class="slider">
+            <img src="{% static 'img/productosaseoanimado1.png' %}" alt="Imagen 1">
+            <img src="{% static 'img/productosaseoanimado2.png' %}" alt="Imagen 2">
+            <img src="{% static 'img/productosaseoanimado3.png' %}" alt="Imagen 3">
+        </div>
+    </section>
+    <section>
+
+    </section>
+    <footer>
+        <p>Síguenos en nuestras redes sociales:</p>
+        <div class="social-media">
+            <a href="https://www.instagram.com"><img src="{% static 'icon/logotipo-de-instagram.png' %}" alt="Instagram" class="icono"></a>
+            <a href="https://www.facebook.com"><img src="{% static 'icon/facebook.png' %}" alt="Facebook" class="icono"></a>
+            <a href="https://www.twitter.com"><img src="{% static 'icon/gorjeo.png' %}" alt="Twitter" class="icono"></a>
+        </div>
+        <p>Contacto: +57 123 456 7890</p>
+        <p>&copy; 2024 Malekith. Todos los derechos reservados.</p>
+    </footer>
+    <script src="{% static 'js/menu.js' %}"></script>
+</body>
+</html>

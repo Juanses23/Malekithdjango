@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <title>Envio de correos masivos</title>
+    <link rel="icon" href="{% static 'icon/Malekith.png' %}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'css/admin.css' %}"> </head>
+<body>
+    <header>
+        <nav class="contenedor">
+            <img src="{% static 'icon/Malekith-white.png' %}" alt="logo" class="logo">
+            <a href="{% url 'admin_view' %}">Volver</a>
+        </nav>
+    </header>
+    <main>
+        <section class="envio-correos">
+            <h1 class="enviomasivo-title">Envío de correos</h1>
+
+            <div class="envio-opciones">
+                <button type="button" class="opcion-button" onclick="mostrarFormulario('todos')">Enviar a todos</button>
+                <button type="button" class="opcion-button" onclick="mostrarFormulario('uno')">Enviar a uno</button>
+            </div>
+
+            <div id="formulario-todos" style="display:none;">
+                <form method="post" action="{% url 'admin_envio_masivo' %}" style="background-color: rgba(255, 255, 255, 0.80);">
+                    {% csrf_token %}
+                    <input type="hidden" name="tipo_envio" value="todos">
+                    <label>Asunto:</label>
+                    <input type="text" name="asunto" required>
+                    <label>Mensaje:</label>
+                    <textarea name="mensaje" required class="mensaje-textarea"></textarea>
+                    <button type="submit">Enviar a todos</button>
+                </form>
+            </div>
+
+            <div id="formulario-uno" style="display:none;">
+                <form method="post" action="{% url 'admin_envio_masivo' %}" style="background-color: rgba(255, 255, 255, 0.80);">
+                    {% csrf_token %}
+                    <input type="hidden" name="tipo_envio" value="uno">
+                    <label>Correo destinatario:</label>
+                    <select name="email_destino" required>
+                        {% for usuario in usuarios %}
+                            <option value="{{ usuario.email }}">{{ usuario.nombre }} {{ usuario.apellido }} - {{ usuario.email }}</option>
+                        {% endfor %}
+                    </select>
+                    <label>Asunto:</label>
+                    <input type="text" name="asunto" required>
+                    <label>Mensaje:</label>
+                    <textarea name="mensaje" required class="mensaje-textarea"></textarea>
+                    <button type="submit">Enviar a uno</button>
+                </form>
+            </div>
+            <script>
+                function mostrarFormulario(opcion) {
+                    document.getElementById('formulario-todos').style.display = opcion === 'todos' ? 'block' : 'none';
+                    document.getElementById('formulario-uno').style.display = opcion === 'uno' ? 'block' : 'none';
+                }
+                </script>
+        </section>
+    </main>
+    
+</body>
+</html>

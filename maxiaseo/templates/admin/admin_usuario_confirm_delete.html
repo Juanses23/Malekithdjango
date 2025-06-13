@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <title>Confirmar Eliminación</title>
+    <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+    <link rel="icon" href="{% static 'icon/Malekith.png' %}" type="image/x-icon">
+</head>
+<body>
+    <header>
+        <nav class="contenedor">
+            <img src="{% static 'icon/Malekith-white.png' %}" alt="logo" class="logo">
+            <a href="{% url 'usuario_list' %}">Volver a Usuarios</a>
+        </nav>
+    </header>
+    <main>
+        <section>
+            <h1 class="admin-title">Eliminar Usuario</h1>
+            <p class="admin-description">¿Estás seguro de que quieres eliminar al usuario **{{ usuario.nombre }} {{ usuario.apellido }}** con cédula **{{ usuario.cedula }}**?</p>
+
+            <form method="post" style="text-align: center; margin-top: 20px;">
+                {% csrf_token %}
+                <button type="submit" class="delete-btn" style="padding: 10px 20px; font-size: 1.1rem;">Sí, Eliminar</button>
+                <a href="{% url 'admin_usuarios' %}" class="edit-btn" style="padding: 10px 20px; font-size: 1.1rem; margin-left: 10px;">Cancelar</a>
+            </form>
+        </section>
+    </main>
+</body>
+</html>

@@ -1,0 +1,77 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <title>Gestionar Usuarios</title>
+    <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+    <link rel="icon" href="{% static 'icon/Malekith.png' %}" type="image/x-icon">
+</head>
+<body>
+    <header>
+        <nav class="contenedor">
+            <img src="{% static 'icon/Malekith-white.png' %}" alt="logo" class="logo">
+            <a href="{% url 'admin_view' %}">Volver</a>
+            
+            
+        </nav>
+    </header>
+    <main>
+        <section>
+            <h1 class="admin-title">Gestionar Usuarios</h1>
+            <p class="admin-description">Desde aquí puedes gestionar los usuarios de tu sitio.</p>
+
+            
+
+            <a href="{% url 'usuario_create' %}" class="add-button">Crear Nuevo Usuario</a>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Cédula</th>
+                            <th>Nombre</th>
+                            <th>Apellido</th>
+                            <th>Fecha de Nacimiento</th>
+                            <th>Ciudad</th>
+                            <th>Email</th>
+                            <th>Dirección</th>
+                            <th>Teléfono</th>
+                            <th>Administrador</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for usuario in usuarios %}
+                        <tr>
+                            <td>{{ usuario.cedula }}</td>
+                            <td>{{ usuario.nombre }}</td>
+                            <td>{{ usuario.apellido }}</td>
+                            <td>{{ usuario.fecha_nacimiento|date:"d/m/Y" }}</td>
+                            <td>{{ usuario.ciudad|default_if_none:"N/A" }}</td>
+                            <td>{{ usuario.email }}</td>
+                            <td>{{ usuario.direccion|default_if_none:"N/A" }}</td>
+                            <td>{{ usuario.telefono|default_if_none:"N/A" }}</td>
+                            <td>{{ usuario.id_administrador.nombre|default_if_none:"N/A" }}</td>
+                            <td class="action-buttons">
+                                <a href="{% url 'usuario_update' usuario.cedula %}" class="edit-btn" style="padding: 13px 26px;">Editar</a>
+                                <form action="{% url 'usuario_delete' usuario.cedula %}" method="post" style="display:inline; padding: 0;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="delete-btn" onclick="return confirm('¿Estás seguro de que quieres eliminar a este usuario?')">Eliminar</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="10">No hay usuarios registrados.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

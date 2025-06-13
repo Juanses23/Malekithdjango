@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administrador</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/admin2.css' %}"> 
+    <link rel="icon" href="{% static 'icon/Malekith.png' %}" type="image/x-icon">
+</head>
+<body>
+    <header>
+        <nav class="contenedor">
+            <img src="{% static 'icon/Malekith-white.png' %}" alt="logo" class="logo">
+            
+            {% if request.session.user_name %}
+                <a class="welcome-message">Hola Admin, {{ request.session.user_name }}</a>
+                <a href="{% url 'logout' %}" class="logout-button">Cerrar sesión</a>
+            {% endif %}
+        </nav>
+    </header>
+    <main>
+        <section>
+            <h1 class="admin-title">Bienvenido al Panel de Productos</h1>
+            <p class="admin-description">Desde aquí puedes gestionar tus productos.</p>
+        </section>
+        <section class="admin-buttom">
+            <a class="admin-drill" href="{% url 'admin_productos' %}">Gestionar Productos</a>
+            <a class="admin-drill" href="{% url 'admin_categorias' %}">Gestionar Categorías</a>
+            <a class="admin-drill" href="{% url 'admin_pedidos' %}">Gestionar Pedidos</a>
+            <a class="admin-drill" href="{% url 'admin_proveedores' %}">Gestionar Proveedores</a>
+            <a class="admin-drill" href="{% url 'admin_entradas' %}">Gestionar Entradas</a>
+        </section>
+        
+        <section class="admin-container">
+            <a href="{% url 'admin_view' %}" class="admin-link">Usuarios</a>
+            <a href="{% url 'admin_view2' %}" class="admin-link">Productos</a>
+            <a href="{% url 'admin_view3' %}" class="admin-link">Ventas</a>
+            <a class="admin-link" href="https://www.youtube.com">Como funciona</a>
+        </section>
+    </main>
+    
+</body>
+</html>

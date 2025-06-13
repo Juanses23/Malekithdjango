@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrito</title>
+    <script>
+        function vaciarCarrito() {
+            fetch("{% url 'vaciar_carrito' %}")
+                .then(res => res.json())
+                .then(data => {
+                    if (data.ok) location.reload();
+                });
+        }
+
+        function eliminarItem(id_producto) {
+            fetch(`/eliminar_item_carrito/${id_producto}/`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.ok) location.reload();
+                });
+        }
+
+        function actualizarCantidad(id_producto) {
+            const cantidad = document.getElementById('cantidad-' + id_producto).value;
+
+            fetch("{% url 'actualizar_cantidad' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: `id_producto=${id_producto}&cantidad=${cantidad}`
+            }).then(res => res.json())
+              .then(data => {
+                  if (data.ok) location.reload();
+              });
+        }
+    </script>
+</head>
+<body>
+    <a href="{% url 'productos' %}">Volver</a>
+    <h1>Carrito de Compras</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Precio unitario</th>
+                <th>Cantidad</th>
+                <th>Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pedido in pedidos %}
+                <tr>
+                    <td>{{ pedido.id_pedido }}</td>
+                    <td>{{ pedido.fecha_Creacion|date:"d/m/Y H:i" }}</td>
+                    <td>{{ pedido.estado_pedido }}</td>
+                    <td>${{ pedido.total_pedido }}</td>
+                </tr>
+                <tr>
+                    <td colspan="4">
+                        <strong>Productos:</strong>
+                        <ul>
+                            {% for p in pedido.pedidoproductos_set.all %}
+                                <li>{{ p.id_producto.nombre }} – Cantidad: {{ p.cantidad }}</li>
+                            {% empty %}
+                                <li>No hay productos en este pedido.</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>Total: ${{ total|floatformat:2 }}</h2>
+    <button onclick="vaciarCarrito()">Vaciar carrito</button>
+    <form method="post" action="{% url 'realizar_compra' %}">
+        {% csrf_token %}
+        <input type="submit" value="Finalizar compra">
+    </form>
+
+</body>
+</html>

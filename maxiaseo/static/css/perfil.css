@@ -1,0 +1,119 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --green: hsl(162, 45%, 56%);
+    --lead: hsl(162, 2%, 56%);
+    --blue: hsl(220, 85%, 57%);
+    --violet: hsl(272, 92%, 32%);
+    --white: hsl(0, 0%, 100%);
+    --light-gray: hsl(0, 0%, 90%);
+    --bg-col: hsl(200, 54%, 12%);
+    --glass-bg-col: hsla(0, 0%, 100, 0.25);
+    --border-color: hsla(0, 0%, 100%, 0.25);
+    --blur: blur(10px);
+    --button-color: hsla(0, 0%, 0%, 0.3);
+}
+
+body {
+    background-image: url('../img/productosaseoanimado1.png');
+    color: #333;
+    font-family: "Poppins", sans-serif;
+    font-size: 16px;
+    padding: 40px;
+}
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+.volver{
+    background-color: rgba(255, 255, 255, 0.90);
+    border: 1px solid seagreen;
+    margin-top: 10px;
+    margin-left: 10px;
+    font-size: 1.5rem;
+    color: seagreen;
+    list-style: none;
+    transition: background-color 0.3s ease;
+    height: 100px;
+    width: 200px;
+    text-align: center;
+    line-height: 80px;
+    border-radius: 10px;
+}   
+
+.perfil-container {
+    max-width: 600px;
+    margin: auto;
+    background-color: rgba(255, 255, 255, 0.90);
+    padding: 30px 40px;
+    border-radius: 20px;
+    box-shadow: 0 0 20px rgba(0, 128, 0, 0.1);
+}
+
+.perfil-container h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #26874E;
+    font-weight: 600;
+}
+
+.campo {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 10px;
+}
+
+.campo label {
+    flex: 0 0 130px;
+    font-weight: 500;
+    color: #26874E;
+}
+
+.campo input {
+    flex: 1;
+    padding: 10px 12px;
+    border: none;
+    border-bottom: 2px solid #26874E;
+    background-color: transparent;
+    font-family: inherit;
+    font-size: 16px;
+    color: #333;
+}
+
+.campo input:read-only {
+    color: #888;
+    border-color: #ccc;
+}
+
+.campo span {
+    flex: 1;
+    padding: 10px 12px;
+    color: #555;
+}
+
+.campo button {
+    background-color: #26874E;
+    color: #fff;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+    font-family: inherit;
+}
+
+.campo button:hover {
+    background-color: #1e6c3c;
+}
+
+.campo button[type="submit"] {
+    background-color: #0F9D58;
+    margin-left: 5px;
+}
+
+.campo button[type="submit"]:hover {
+    background-color: #0a8147;
+}

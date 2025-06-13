@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Correo recuperación</title>
+    {% load static %} {# Carga de archivos estáticos en Django #}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}">
+    <link rel="icon" href="{% static 'icon/Malekith.png' %}" type="image/x-icon">
+    <style type="text/css">
+        body {
+            background-image: url("{% static 'img/productosaseoanimado3.png' %}");
+            background-size: cover;       /* Ajusta la imagen al tamaño de la ventana */
+            background-repeat: no-repeat; /* Evita que se repita */
+            background-position: center;  /* Centra la imagen */
+        }
+        .box {
+            border-color: var(--glass-bg-col);
+            border: 1px solid #26874E;
+            padding: 40px 50px;
+            border-radius: 20px;
+            backdrop-filter: var(--blur);
+            background-color: rgba(255, 255, 255, 0.70);
+        }
+    </style>
+</head>
+<body>
+    <a href="{% url 'login' %}" class="volver">Volver</a>
+    <section class="form-main">
+        <div class="form-content">
+            <div class="box">
+                <h3>¿Olvidó su contraseña?</h3>
+                {# La URL del formulario se resuelve con la etiqueta 'url' de Django #}
+                <form action="{% url 'olvido_contrasena' %}" method="POST">
+                    {% csrf_token %} {# ¡Importante! Token CSRF para seguridad en Django #}
+                    
+                    
+
+                    <div class="input-box">
+                        <input type="email" placeholder="Correo de recuperación" name="email" class="input-control" required value="{{ request.POST.email }}">
+                    </div>
+                    <button type="submit" class="btn">Enviar</button>
+                </form>
+                <p>¿No tienes cuenta? <a href="{% url 'registro' %}" class="gradient-text">Crear cuenta</a></p>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
