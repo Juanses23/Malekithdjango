@@ -52,23 +52,17 @@
             </tr>
         </thead>
         <tbody>
-            {% for pedido in pedidos %}
+            {% for id, item in carrito.items %}
                 <tr>
-                    <td>{{ pedido.id_pedido }}</td>
-                    <td>{{ pedido.fecha_Creacion|date:"d/m/Y H:i" }}</td>
-                    <td>{{ pedido.estado_pedido }}</td>
-                    <td>${{ pedido.total_pedido }}</td>
-                </tr>
-                <tr>
-                    <td colspan="4">
-                        <strong>Productos:</strong>
-                        <ul>
-                            {% for p in pedido.pedidoproductos_set.all %}
-                                <li>{{ p.id_producto.nombre }} – Cantidad: {{ p.cantidad }}</li>
-                            {% empty %}
-                                <li>No hay productos en este pedido.</li>
-                            {% endfor %}
-                        </ul>
+                    <td>{{ item.nombre }}</td>
+                    <td>${{ item.precio|floatformat:2 }}</td>
+                    <td>
+                        <input type="number" id="cantidad-{{ id }}" value="{{ item.cantidad }}" min="1">
+                        <button onclick="actualizarCantidad('{{ id }}')">Actualizar</button>
+                    </td>
+                    <td>${{ item.precio|floatformat:2|add:'0.00'|floatformat:2|floatformat:2|stringformat:'f'|floatformat:2 }}</td>
+                    <td>
+                        <button onclick="eliminarItem('{{ id }}')">Eliminar</button>
                     </td>
                 </tr>
             {% endfor %}
