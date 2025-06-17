@@ -1,9 +1,12 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Carrito</title>
+    <link rel="icon" href="{% static 'icon/Malekith.png' %}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'css/carrito.css' %}">
     <script>
         function vaciarCarrito() {
             fetch("{% url 'vaciar_carrito' %}")
@@ -39,9 +42,9 @@
     </script>
 </head>
 <body>
-    <a href="{% url 'productos' %}">Volver</a>
+    <a href="{% url 'productos' %}" class="volver">Volver</a>
     <h1>Carrito de Compras</h1>
-
+    
     <table>
         <thead>
             <tr>
@@ -49,35 +52,36 @@
                 <th>Precio unitario</th>
                 <th>Cantidad</th>
                 <th>Subtotal</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
-            {% for pedido in pedidos %}
-                <tr>
-                    <td>{{ pedido.id_pedido }}</td>
-                    <td>{{ pedido.fecha_Creacion|date:"d/m/Y H:i" }}</td>
-                    <td>{{ pedido.estado_pedido }}</td>
-                    <td>${{ pedido.total_pedido }}</td>
-                </tr>
-                <tr>
-                    <td colspan="4">
-                        <strong>Productos:</strong>
-                        <ul>
-                            {% for p in pedido.pedidoproductos_set.all %}
-                                <li>{{ p.id_producto.nombre }} – Cantidad: {{ p.cantidad }}</li>
-                            {% empty %}
-                                <li>No hay productos en este pedido.</li>
-                            {% endfor %}
-                        </ul>
-                    </td>
-                </tr>
+            {% for id, item in carrito.items %}
+            <tr>
+                <td>{{ item.nombre }}</td>
+                <td>${{ item.precio|floatformat:2 }}</td>
+                <td>
+                    <input type="number" id="cantidad-{{ id }}" value="{{ item.cantidad }}" min="1">
+                    <button onclick="actualizarCantidad('{{ id }}')">Actualizar</button>
+                </td>
+                <td>${{ item.subtotal|floatformat:2 }}</td>
+                <td>
+                    <button onclick="eliminarItem('{{ id }}')">Eliminar</button>
+                </td>
+            </tr>
             {% endfor %}
+            <tr>
+                <td><button onclick="vaciarCarrito()">Vaciar carrito</button></td>
+                <td colspan="2"><strong>Total:</strong></td>
+                <td><strong>${{ total|floatformat:2 }}</strong></td>
+                <td></td>
+            </tr>
         </tbody>
     </table>
 
     <h2>Total: ${{ total|floatformat:2 }}</h2>
-    <button onclick="vaciarCarrito()">Vaciar carrito</button>
-    <form method="post" action="{% url 'realizar_compra' %}">
+    
+    <form method="get" action="{% url 'seleccionar_metodo_pago' %}">
         {% csrf_token %}
         <input type="submit" value="Finalizar compra">
     </form>

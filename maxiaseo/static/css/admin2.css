@@ -17,10 +17,12 @@
 body {
     font-family: 'lato', sans-serif;
     font-weight: bold;
-    background-image: url(../img/productosaseoanimado1.png);
+    background-color: white;
+    /*background-image: url(../img/productosaseoanimado1.png);*/
 }
 
 .contenedor {
+    z-index: 1;
     position: fixed;
     display: flex;
     width: 100%;
@@ -45,11 +47,11 @@ body {
     color: black;
 }
 .logo {
-    width: 220px;
-    height: 220px;
+    width: 135px;
+    height: 120px;
     position: relative;
-    margin-left: 150px;
-    margin-top: -25px;
+    margin-left: 50px;
+    margin-top: 25px;
     margin-right: 500px;
 }
 .icono {
@@ -64,7 +66,7 @@ main {
 .admin-buttom{
     padding-top: 50px;
     padding-left: 250px;
-    display: block;
+    position: relative;
 }
 .admin-buttom .admin-drill{
     height: 250px;
@@ -75,6 +77,8 @@ main {
     padding: 60px;
     text-decoration: none;
     color: white;
+    position: relative;
+    border-radius: 16px;
 }
 .admin-drill:hover {
     color: black;

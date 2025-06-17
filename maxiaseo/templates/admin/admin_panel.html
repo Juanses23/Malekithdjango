@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administrador</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/admin3.css' %}"> 
+    <link rel="icon" href="{% static 'icon/Malekith.png' %}" type="image/x-icon">
+
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- jsPDF CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <header>
+        <nav class="contenedor">
+            <img src="{% static 'icon/MALEKITH-1.png' %}" alt="logo" class="logo">
+            {% if request.session.user_name %}
+                <a class="welcome-message">Hola Admin, {{ request.session.user_name }}</a>
+                <a href="{% url 'logout' %}" class="logout-button">Cerrar sesión</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <main>
+        <section class="admin-buttom">
+            <h2 class="admin-title">Gráfico de Productos Vendidos y Ventas por Día</h2>
+            <div class="graficos-container">
+                <canvas id="graficoPastel"></canvas>
+                <canvas id="graficoLineas"></canvas>
+            </div>
+            <button onclick="descargarPDF()" class="pdf-buttom">Descargar PDF</button>
+        </section>
+
+        <section class="admin-container">
+            <a href="{% url 'admin_view' %}" class="admin-link">Usuarios</a>
+            <a href="{% url 'admin_view2' %}" class="admin-link">Productos</a>
+            <a href="{% url 'panel_admin' %}" class="admin-link">Ventas</a>
+            <a class="admin-link" href="https://www.youtube.com">Como funciona</a>
+        </section>
+    </main>
+
+    <script>
+        // Gráfico de pastel
+        const ctxPastel = document.getElementById('graficoPastel').getContext('2d');
+        new Chart(ctxPastel, {
+            type: 'pie',
+            data: {
+                labels: {{ labels_pastel|safe }},
+                datasets: [{
+                    label: 'Productos Vendidos',
+                    data: {{ data_pastel|safe }},
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.5)',
+                        'rgba(54, 162, 235, 0.5)',
+                        'rgba(255, 206, 86, 0.5)',
+                        'rgba(75, 192, 192, 0.5)',
+                        'rgba(153, 102, 255, 0.5)',
+                        'rgba(255, 159, 64, 0.5)'
+                    ],
+                    borderWidth: 1
+                }]
+            }
+        });
+
+        // Gráfico de líneas
+        const ctxLineas = document.getElementById('graficoLineas').getContext('2d');
+        new Chart(ctxLineas, {
+            type: 'line',
+            data: {
+                labels: {{ labels_linea|safe }},
+                datasets: [{
+                    label: 'Ventas por Día',
+                    data: {{ data_linea|safe }},
+                    fill: true,
+                    backgroundColor: 'rgba(75,192,192,0.2)',
+                    borderColor: 'rgba(75,192,192,1)',
+                    tension: 0.1
+                }]
+            }
+        });
+
+        // Descargar PDF con las gráficas
+        function descargarPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            setTimeout(() => {
+                try {
+                    const canvasPastel = document.getElementById('graficoPastel');
+                    const canvasLineas = document.getElementById('graficoLineas');
+
+                    const imgPastel = canvasPastel.toDataURL("image/png");
+                    const imgLineas = canvasLineas.toDataURL("image/png");
+
+                    doc.text("Gráfico de Productos Vendidos", 10, 10);
+                    doc.addImage(imgPastel, 'PNG', 10, 20, 180, 100);
+
+                    doc.addPage();
+                    doc.text("Ventas por Día", 10, 10);
+                    doc.addImage(imgLineas, 'PNG', 10, 20, 180, 100);
+
+                    doc.save("reporte_ventas.pdf");
+                } catch (error) {
+                    alert("Error al generar PDF: " + error.message);
+                }
+            }, 500); // Espera a que se generen las gráficas
+        }
+    </script>
+</body>
+</html>

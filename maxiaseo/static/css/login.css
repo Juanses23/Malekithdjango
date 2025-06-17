@@ -91,15 +91,6 @@ a{
     position: relative;
     z-index: 1;
 }
-/*
-.form-content .box {
-    border-color: var(--glass-bg-col);
-    border: 1px solid #26874E;
-    padding: 40px 50px;
-    border-radius: 20px;
-    backdrop-filter: var(--blur);
-
-}*/
 .form-content h3 {
     font-size: 28px;
     text-align: center;

@@ -34,7 +34,7 @@ class Producto(models.Model):
     id_producto = models.AutoField(primary_key=True)
     descripcion_producto = models.CharField(max_length=100)
     cantidad_producto = models.PositiveIntegerField()
-    valor_producto = models.DecimalField(max_digits=10, decimal_places=2)
+    valor_producto = models.DecimalField(max_digits=20, decimal_places=2)
     imagen = models.CharField(max_length=100, blank=True, null=True)
     id_categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
     class Meta:
@@ -55,22 +55,27 @@ class Proveedor(models.Model):
 
 class EntradaProducto(models.Model):
     id_entrada_producto = models.AutoField(primary_key=True)
-    nombre_producto = models.CharField(max_length=100)
+    descripcion = models.CharField(max_length=100) # Reconsiderar si es necesario
     fecha_entrada = models.DateField()
     cantidad_producto = models.IntegerField()
-    costo_entrada = models.IntegerField()
+    # ¡Recomendación! Cambiar a DecimalField si es un valor monetario
+    # costo_entrada = models.IntegerField()
+    costo_entrada = models.DecimalField(max_digits=10, decimal_places=2) # Sugerido
+
     id_proveedor = models.ForeignKey(Proveedor, on_delete=models.SET_NULL, blank=True, null=True)
     id_producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
 
-    def __str__(self):
-        return self.nombre_producto
 
+    def __str__(self):
+        return f"Entrada {self.id_entrada_producto} - {self.nombre_producto}"
 class Pedido(models.Model):
     id_pedido = models.AutoField(primary_key=True)
     fecha_Creacion = models.DateTimeField(auto_now_add=True)
     estado_pedido = models.CharField(max_length=30)
     total_pedido = models.DecimalField(max_digits=20, decimal_places=2)
     cedula = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    metodo = models.CharField(max_length=50, default='efectivo')
+
 
     def __str__(self):
         return str(self.id_pedido)
@@ -85,7 +90,7 @@ class PedidoProductos(models.Model):
 
     def __str__(self):
         return f"Pedido {self.id_pedido} - Producto {self.id_producto}"
-
+    
 class Venta(models.Model):
     producto = models.OneToOneField(Producto, on_delete=models.CASCADE)
     pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE,null=True, blank=True)

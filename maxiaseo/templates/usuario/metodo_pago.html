@@ -1,0 +1,27 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Método de Pago</title>
+    <link rel="stylesheet" href="{% static 'css/carrito.css' %}">
+</head>
+<body>
+    <a href="{% url 'carrito_view' %}" class="volver">Volver al carrito</a>
+    <h1>Selecciona un método de pago</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        <label>
+            <input type="radio" name="metodo" value="efectivo" checked> Efectivo
+        </label><br>
+        <label>
+            <input type="radio" name="metodo" value="tarjeta"> Tarjeta
+        </label><br>
+        <label>
+            <input type="radio" name="metodo" value="pse"> PSE
+        </label><br><br>
+        <input type="submit" value="Continuar con la compra">
+    </form>
+</body>
+</html>

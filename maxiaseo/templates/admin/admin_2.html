@@ -11,7 +11,7 @@
 <body>
     <header>
         <nav class="contenedor">
-            <img src="{% static 'icon/Malekith-white.png' %}" alt="logo" class="logo">
+            <img src="{% static 'icon/MALEKITH-1.png' %}" alt="logo" class="logo">
             
             {% if request.session.user_name %}
                 <a class="welcome-message">Hola Admin, {{ request.session.user_name }}</a>
@@ -35,7 +35,7 @@
         <section class="admin-container">
             <a href="{% url 'admin_view' %}" class="admin-link">Usuarios</a>
             <a href="{% url 'admin_view2' %}" class="admin-link">Productos</a>
-            <a href="{% url 'admin_view3' %}" class="admin-link">Ventas</a>
+            <a href="{% url 'panel_admin' %}" class="admin-link">Ventas</a>
             <a class="admin-link" href="https://www.youtube.com">Como funciona</a>
         </section>
     </main>

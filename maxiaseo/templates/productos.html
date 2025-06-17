@@ -13,25 +13,25 @@
 <body>
     <header>
         <nav class="contenedor">
-            <img src="{% static 'icon/Malekith-white.png' %}" alt="logo" class="logo">
+            <img src="{% static 'icon/MALEKITH-1.png' %}" alt="logo" class="logo">
             <a href="{% url 'inicio' %}">Inicio</a>
             <a href="{% url 'nuestra_empresa' %}">Nuestra empresa</a>
             <a href="{% url 'productos' %}">Tienda</a>
 
             {% if request.session.user_name %}
-                
                 <a href="{% url 'logout' %}" class="logout-button">Cerrar sesión</a>
-                <div class="dropdown">
-                    <a href="#" id="userMenuToggle">Hola, {{ request.session.user_name }}</a>
-                    <div class="dropdown-menu" id="userMenu">
-                        <a href="{% url 'pedidos' %}">Pedidos</a>
-                        <a href="{% url 'perfil' %}">Perfil</a>
-                    </div>
-                    <a href="{% url 'carrito_view' %}">Carrito</a>
-                </div>
+                <a href="#" id="userMenuToggle">Hola, {{ request.session.user_name }}</a>
+                <a href="{% url 'perfil' %}">Perfil</a>
+                <a href="{% url 'pedidos' %}">Pedidos</a>
             {% else %}
                 <a href="{% url 'login' %}">Iniciar sesión</a>
             {% endif %}
+            <a href="{% url 'carrito_view' %}" class="carrito-icono">
+                <img src="{% static 'icon/carrito-white.png' %}" alt="Carrito">
+                {% if total_items_carrito > 0 %}
+                    <span class="contador-carrito">{{ total_items_carrito }}</span>
+                {% endif %}
+            </a>
         </nav>
     </header>
     
@@ -58,7 +58,7 @@
                     {% csrf_token %} 
                     <img src="{% static 'img/' %}{{ producto.imagen }}" alt="{{ producto.descripcion_producto }}">
                     <h2>{{ producto.descripcion_producto }}</h2>
-                    <span class="valor">${{ producto.valor_producto|floatformat:2 }}</span> {# Formatea el precio a 2 decimales #}
+                    <span class="valor">${{ producto.valor_producto|floatformat:2 }}</span>
                     <div class="input-box">
                         <label for="cantidad-{{ producto.id_producto }}" class="quantity-label">Cantidad:</label>
                         <select class="quantity" name="cantidad" id="cantidad-{{ producto.id_producto }}" required>
@@ -72,8 +72,8 @@
                     <input type="hidden" name="id_producto" value="{{ producto.id_producto }}">
                     <input type="hidden" name="nombre" value="{{ producto.descripcion_producto }}">
                     <input type="hidden" name="precio" value="{{ producto.valor_producto }}">
+                    <button type="submit" name="add_to_cart" class="btn"value="Añadir al carrito"><img src="{% static 'icon/carrito-white.png' %}" alt="logo" class="carritos"></button>
                     
-                    <input type="submit" name="add_to_cart" class="btn" value="Añadir al carrito">
                 </form>
             {% empty %}
                 <p>No hay productos disponibles en esta categoría.</p>

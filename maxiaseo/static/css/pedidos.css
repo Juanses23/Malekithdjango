@@ -1,14 +1,14 @@
 .pedidos-container {
     max-width: 800px;
     margin: 50px auto;
-    background-color: rgba(255, 255, 255, 0.90);
+    background-color: rgba(255, 255, 255, 0.70);
     padding: 30px;
     border-radius: 20px;
     box-shadow: 0 0 10px rgba(0, 128, 0, 0.1);
     font-family: 'Poppins', sans-serif;
 }
 .volver{
-    background-color: rgba(255, 255, 255, 0.90);
+    background-color: rgba(255, 255, 255, 80%);
     border: 1px solid seagreen;
     margin-top: 10px;
     margin-left: 10px;
@@ -16,20 +16,28 @@
     color: seagreen;
     list-style: none;
     transition: background-color 0.3s ease;
-    height: 100px;
-    width: 200px;
+    height: 80px;
+    width: 160px;
     text-align: center;
     line-height: 80px;
     border-radius: 10px;
+    display: block;
+    text-decoration: none;
 }   
-
+.pedido-fila {
+    cursor: pointer;
+}
+.pedido-fila:hover {
+    background-color: #f0f0f0;
+}
 .pedidos-container h2 {
     text-align: center;
     color: #26874E;
     margin-bottom: 30px;
 }
 body{
-    background-image: url('../img/productosaseoanimado1.png');
+    background-color: seagreen;
+    /*background-image: url('../img/productosaseoanimado1.png');*/
 }
 .tabla-pedidos {
     width: 100%;

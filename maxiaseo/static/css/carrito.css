@@ -1,0 +1,106 @@
+body {
+    background-color: seagreen;
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.volver {
+    background-color: seagreen;
+    border: 1px solid white;
+    margin: 20px;
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    color: white;
+    text-decoration: none;
+    border-radius: 10px;
+    display: inline-block;
+    transition: background-color 0.3s ease;
+}
+
+a:hover {
+    background-color: #1f6f3f;
+}
+
+h1 {
+    text-align: center;
+    color: #fff;
+    margin-top: 30px;
+}
+
+table {
+    border: 1px solid red;
+    width: 90%;
+    max-width: 1000px;
+    margin: 30px auto;
+    border-collapse: collapse;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(0, 128, 0, 0.2);
+}
+
+table th,
+table td {
+    padding: 15px;
+    text-align: center;
+    border-bottom: 1px solid #ccc;
+}
+
+table th {
+    background-color: #26874E;
+    color: #fff;
+}
+
+table tr:hover {
+    background-color: #f0f0f0;
+}
+
+input[type="number"] {
+    width: 60px;
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #26874E;
+}
+
+button {
+    background-color: #4DA768;
+    color: #fff;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #3e8e5e;
+}
+
+h2 {
+    text-align: center;
+    color: #fff;
+    margin-bottom: 20px;
+}
+
+form {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+input[type="submit"] {
+    background-color: #26874E;
+    color: white;
+    padding: 10px 25px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    border: 1px solid white;
+}
+
+input[type="submit"]:hover {
+    background-color: #1f6f3f;
+    
+}

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <title>Gestionar Proveedores</title>
+    <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+    <link rel="icon" href="{% static 'icon/Malekith.png' %}" type="image/x-icon">
+</head>
+<body>
+    <header>
+        <nav class="contenedor">
+            <img src="{% static 'icon/Malekith-white.png' %}" alt="logo" class="logo">
+            <a href="{% url 'admin_view2' %}">Volver</a> {# Asumiendo que 'admin_view' existe y te lleva al panel principal #}
+        </nav>
+    </header>
+    <main>
+        <section>
+            <h1 class="admin-title">Gestionar Proveedores</h1>
+            <p class="admin-description">Desde aquí puedes gestionar los proveedores de tu sitio.</p>
+
+            {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
+            <a href="{% url 'proveedor_create' %}" class="add-button">Crear Nuevo Proveedor</a>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Email</th>
+                            <th>Razón Social</th>
+                            <th>NIT</th>
+                            <th>Teléfono</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for proveedor in proveedores %}
+                        <tr>
+                            <td>{{ proveedor.id_proveedor }}</td>
+                            <td>{{ proveedor.nombre_proveedor }}</td>
+                            <td>{{ proveedor.email|default:"N/A" }}</td> {# Muestra "N/A" si es null/blank #}
+                            <td>{{ proveedor.razon_social|default:"N/A" }}</td>
+                            <td>{{ proveedor.nit|default:"N/A" }}</td>
+                            <td>{{ proveedor.telefono|default:"N/A" }}</td>
+                            <td class="action-buttons">
+                                <a href="{% url 'proveedor_update' proveedor.id_proveedor %}" class="edit-btn" style="padding: 13px 26px;">Editar</a>
+                                <form action="{% url 'proveedor_delete' proveedor.id_proveedor %}" method="post" style="display:inline; padding: 0;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="delete-btn" onclick="return confirm('¿Estás seguro de que quieres eliminar este proveedor?')">Eliminar</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7">No hay proveedores registrados.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

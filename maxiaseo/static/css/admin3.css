@@ -17,10 +17,12 @@
 body {
     font-family: 'lato', sans-serif;
     font-weight: bold;
-    background-image: url(../img/productosaseoanimado1.png);
+    background-color: white;
+    /*background-image: url(../img/productosaseoanimado1.png);*/
 }
 
 .contenedor {
+    z-index: 1;
     position: fixed;
     display: flex;
     width: 100%;
@@ -45,11 +47,11 @@ body {
     color: black;
 }
 .logo {
-    width: 220px;
-    height: 220px;
+    width: 135px;
+    height: 120px;
     position: relative;
-    margin-left: 150px;
-    margin-top: -25px;
+    margin-left: 50px;
+    margin-top: 25px;
     margin-right: 500px;
 }
 .icono {
@@ -81,7 +83,7 @@ main {
     background-color: #155724;
 }
 .admin-title {
-    color: white;
+    color: black;
     padding-top: 180px;
     text-align: center;
     font-size: 2rem;
@@ -123,4 +125,36 @@ main {
     color: black;
     background-color: #155724;
     
+}
+.graficos-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 20px;
+    flex-wrap: wrap; /* Para que se acomoden en columna si la pantalla es muy pequeña */
+}
+
+canvas {
+    max-width: 750px;
+    max-height: 350px;
+    width: 100% !important;
+    height: auto !important;
+}
+.pdf-buttom{
+    background-color: seagreen;
+    border: none;
+    width: 150px;
+    height: 75px;
+    text-align: center;
+    font-size: 1.2rem;
+    color: white;
+    border-radius: 16px;
+    margin-top: 150px;
+    margin-left: 650px;
+}
+.pdf-buttom:hover {
+    background-color: #155724;
+    color: black;
+    text-decoration: none;
+    box-sizing: border-box;
 }

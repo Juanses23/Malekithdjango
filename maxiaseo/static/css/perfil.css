@@ -15,7 +15,8 @@
 }
 
 body {
-    background-image: url('../img/productosaseoanimado1.png');
+    background-color: seagreen;
+    /*background-image: url('../img/productosaseoanimado1.png');*/
     color: #333;
     font-family: "Poppins", sans-serif;
     font-size: 16px;
@@ -35,11 +36,13 @@ body {
     color: seagreen;
     list-style: none;
     transition: background-color 0.3s ease;
-    height: 100px;
-    width: 200px;
+    height: 80px;
+    width: 160px;
     text-align: center;
     line-height: 80px;
     border-radius: 10px;
+    text-decoration: none;
+    display: block;
 }   
 
 .perfil-container {

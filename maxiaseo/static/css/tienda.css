@@ -41,11 +41,11 @@ body {
     color: black;
 }
 .logo {
-    width: 220px;
-    height: 220px;
+    width: 135px;
+    height: 120px;
     position: relative;
-    margin-left: 130px;
-    margin-top: -25px;
+    margin-left: 50px;
+    margin-top: 25px;
     margin-right: 500px;
 }
 .icono {
@@ -55,7 +55,8 @@ body {
 
 
 main {
-    background-image: url('../img/productosaseoanimado1.png');
+    background-color: white;
+    /*background-image: url('../img/productosaseoanimado1.png');*/
     padding: 2rem;
 }
 
@@ -105,7 +106,7 @@ main {
     overflow: hidden;
     width: 200px;
     text-align: center;
-    height:380px;
+    height:350px;
     padding: 1rem;
     transition: transform 0.3s ease;
     position: relative;
@@ -131,15 +132,15 @@ main {
     font-size: 1rem;
     color: white;
     position: absolute;
-    bottom:85px;
-    left:23.2px;
+    bottom:70px;
+    left:75px;
 }
 .product .quantity-label {
     font-size: 1rem;
     color: white;
     position: absolute;
-    bottom:85px;
-    right:23.2px;
+    bottom:50px;
+    left:23.2px;
 }
 .product:hover {
     transform: scale(1.03);
@@ -152,9 +153,9 @@ main {
 .product .quantity{
     font-size: 1rem;
     position: absolute;
-    bottom: 40px;
+    bottom: 10px;
     left: 23.2px;
-    width: 80%;
+    width: 161px;
     padding: 10px;
     box-sizing: border-box;
     appearance: none;
@@ -164,27 +165,59 @@ main {
 
 }
 .product .btn{
-    height: 40px;
-    width: 100%;
+    height: 39px;
+    width: 39px;
+    right: 23.2px;
     font-size: 1rem;
+    border: 1px solid white;
     cursor: pointer;
+    border-radius: 8px;
     background: seagreen;
     border: none;
     color: white;
     position: absolute;
-    bottom:0;
-    right: 0;
-    padding: 10px;
+    bottom:10px;
+    padding: 5px;
     text-align: center;
     font-family: 'lato', sans-serif;
     font-style: bold;
 }
-
+.product .btn .carritos{
+    border: none;
+    width: 30px;
+    height: 30px;
+    background-color: seagreen;
+}
 .product .btn:hover{
     color:black;
     background:rgb(26, 119, 67);
 }
+.product .btn .carritos:hover{
+    color:black;
+    background:rgb(26, 119, 67);
+}
+.carrito-icono {
+    position: relative;
+    display: inline-block;
+}
 
+.carrito-icono img {
+    width: 30px;
+    height: 30px;
+}
+
+.contador-carrito {
+    position: absolute;
+    top: 55px;
+    right: -8px;
+    background-color: red;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 4px 6px;
+    border-radius: 50%;
+    line-height: 10px;
+}
 .dropdown {
     position: relative;
     display: inline-block;

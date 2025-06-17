@@ -1,4 +1,5 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -23,29 +24,39 @@
                 </thead>
                 <tbody>
                     {% for pedido in pedidos %}
-                        <tr>
+                        <tr class="pedido-fila" onclick="toggleProductos(this)">
                             <td>{{ pedido.id_pedido }}</td>
                             <td>{{ pedido.fecha_Creacion|date:"d/m/Y H:i" }}</td>
                             <td>{{ pedido.estado_pedido }}</td>
                             <td>${{ pedido.total_pedido }}</td>
                         </tr>
-                        <tr>
+                        <tr class="productos-fila" style="display: none;">
                             <td colspan="4">
                                 <strong>Productos:</strong>
                                 <ul>
                                     {% for p in pedido.productos.all %}
-                                        <li>{{ p.id_producto.nombre }} – Cantidad: {{ p.cantidad }}</li>
+                                        <li>{{ p.id_producto.descripcion_producto }} – Cantidad: {{ p.cantidad }}</li>
                                     {% endfor %}
                                 </ul>
+                                <p><strong>Método de pago:</strong> {{ pedido.metodo|capfirst }}</p>
                             </td>
                         </tr>
                     {% endfor %}
                 </tbody>
-                
             </table>
         {% else %}
-            <p>No has realizado pedidos aún.</p>
+            <p>No tienes pedidos registrados.</p>
         {% endif %}
     </div>
+    <script>
+        function toggleProductos(filaPedido) {
+            const filaProductos = filaPedido.nextElementSibling;
+            if (filaProductos.style.display === "none") {
+                filaProductos.style.display = "table-row";
+            } else {
+                filaProductos.style.display = "none";
+            }
+        }
+    </script>
 </body>
 </html>

@@ -43,12 +43,12 @@ body {
     color: black;
 }
 .logo {
-    width: 220px;
-    height: 220px;
-    position: relative;
-    margin-left: 130px;
-    margin-top: -25px;
-    margin-right: 500px;
+  width: 135px;
+  height: 120px;
+  position: relative;
+  margin-left: 50px;
+  margin-top: 25px;
+  margin-right: 500px;
 }
 .icono {
     width: 15px;

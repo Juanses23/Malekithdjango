@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
-from .models import Usuario,Producto,Categoria
+from .models import Usuario,Producto,Categoria,Pedido,Proveedor,EntradaProducto,PedidoProductos
 class FormularioLogin(AuthenticationForm):
     pass
 
@@ -33,3 +33,59 @@ class CategoriaForm(forms.ModelForm):
     class Meta:
         model = Categoria
         fields = ['nombre_categoria']
+
+class PedidoForm(forms.ModelForm):
+    class Meta:
+        model = Pedido
+        fields = [
+            'estado_pedido', 'total_pedido', 'cedula'
+        ]
+        # Opcional: Widgets para estado_pedido si tienes opciones fijas
+        # widgets = {
+        #     'estado_pedido': forms.Select(choices=[
+        #         ('Pendiente', 'Pendiente'),
+        #         ('Procesando', 'Procesando'),
+        #         ('Enviado', 'Enviado'),
+        #         ('Entregado', 'Entregado'),
+        #         ('Cancelado', 'Cancelado'),
+        #     ])
+        # }
+
+# NUEVO FORMULARIO: PedidoUpdateForm para editar solo el estado
+class PedidoUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Pedido
+        fields = ['estado_pedido'] # ¡Solo el campo estado_pedido!
+        # Opcional: Widgets para estado_pedido
+        # widgets = {
+        #     'estado_pedido': forms.Select(choices=[
+        #         ('Pendiente', 'Pendiente'),
+        #         ('Procesando', 'Procesando'),
+        #         ('Enviado', 'Enviado'),
+        #         ('Entregado', 'Entregado'),
+        #         ('Cancelado', 'Cancelado'),
+        #     ])
+        # }
+
+
+class ProveedorForm(forms.ModelForm):
+    class Meta:
+        model = Proveedor
+        fields = [
+            'nombre_proveedor', 'email', 'razon_social', 'nit', 'telefono'
+        ]
+        # Si quisieras asegurar que el NIT se muestre como un campo de texto y no numérico con flechas:
+        # widgets = {
+        #     'nit': forms.TextInput(attrs={'type': 'text'})
+        # }
+class EntradaProductoForm(forms.ModelForm):
+    class Meta:
+        model = EntradaProducto
+        fields = [
+            'descripcion', 'fecha_entrada', 'cantidad_producto',
+            # 'costo_entrada',  <-- ¡Remover este campo del formulario!
+            'id_proveedor', 'id_producto'
+        ]
+        widgets = {
+            'fecha_entrada': forms.DateInput(attrs={'type': 'date'}),
+        }

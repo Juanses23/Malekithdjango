@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <title>Gestionar Entradas de Producto</title>
+    <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+    <link rel="icon" href="{% static 'icon/Malekith.png' %}" type="image/x-icon">
+</head>
+<body>
+    <header>
+        <nav class="contenedor">
+            <img src="{% static 'icon/Malekith-white.png' %}" alt="logo" class="logo">
+            <a href="{% url 'admin_view2' %}">Volver</a> {# Asumiendo que 'admin_view' existe y te lleva al panel principal #}
+        </nav>
+    </header>
+    <main>
+        <section>
+            <h1 class="admin-title">Gestionar Entradas de Producto</h1>
+            <p class="admin-description">Desde aquí puedes gestionar las entradas de productos en tu inventario.</p>
+
+            {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
+            <a href="{% url 'entrada_create' %}" class="add-button">Registrar Nueva Entrada</a>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID Entrada</th>
+                            <th>Descripcion</th>
+                            <th>Fecha Entrada</th>
+                            <th>Cantidad</th>
+                            <th>Costo</th>
+                            <th>Proveedor</th>
+                            <th>Producto (ID)</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for entrada in entradas %}
+                        <tr>
+                            <td>{{ entrada.id_entrada_producto }}</td>
+                            <td>{{ entrada.descripcion }}</td>
+                            <td>{{ entrada.fecha_entrada|date:"d/m/Y" }}</td>
+                            <td>{{ entrada.cantidad_producto }}</td>
+                            <td>${{ entrada.costo_entrada|floatformat:2 }}</td> {# Asumiendo que has cambiado a DecimalField #}
+                            <td>
+                                {% if entrada.id_proveedor %}
+                                    {{ entrada.id_proveedor.nombre_proveedor }}
+                                {% else %}
+                                    N/A (Eliminado)
+                                {% endif %}
+                            </td>
+                            <td>{{ entrada.id_producto.descripcion_producto }} (ID: {{ entrada.id_producto.id_producto }})</td>
+                            <td class="action-buttons">
+                                <a href="{% url 'entrada_update' entrada.id_entrada_producto %}" class="edit-btn" style="padding: 13px 26px;">Editar</a>
+                                <form action="{% url 'entrada_delete' entrada.id_entrada_producto %}" method="post" style="display:inline; padding: 0;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="delete-btn" onclick="return confirm('¿Estás seguro de que quieres eliminar esta entrada de producto?')">Eliminar</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="8">No hay entradas de productos registradas.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

@@ -11,20 +11,16 @@
 <body>
     <header>
         <nav class="contenedor">
-            <img src="{% static 'icon/Malekith-white.png' %}" alt="logo" class="logo">
+            <img src="{% static 'icon/MALEKITH-1.png' %}" alt="logo" class="logo">
             <a href="{% url 'inicio' %}">Inicio</a>
             <a href="{% url 'nuestra_empresa' %}">Nuestra empresa</a>
             <a href="{% url 'productos' %}">Tienda</a>
             {% if request.session.user_name %}
                 
                 <a href="{% url 'logout' %}" class="logout-button">Cerrar sesión</a>
-                <div class="dropdown">
-                    <a href="#" id="userMenuToggle">Hola, {{ request.session.user_name }}</a>
-                    <div class="dropdown-menu" id="userMenu">
-                        <a href="{% url 'pedidos' %}">Pedidos</a>
-                        <a href="{% url 'perfil' %}">Perfil</a>
-                    </div>
-                </div>
+                <a href="#" id="userMenuToggle">Hola, {{ request.session.user_name }}</a>
+                <a href="{% url 'perfil' %}">Perfil</a>
+                <a href="{% url 'pedidos' %}">Pedidos</a>
             {% else %}
                 <a href="{% url 'login' %}">Iniciar sesión</a>
             {% endif %}

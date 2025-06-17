@@ -5,15 +5,16 @@ from django.urls import reverse
 from decimal import Decimal,InvalidOperation
 from django.db import transaction
 from django.utils import timezone
+from django.db.models import Sum
 from django.db.models import Prefetch
-from .forms import FormularioLogin,UsuarioForm,ProductoForm,CategoriaForm
+from .forms import FormularioLogin,UsuarioForm,ProductoForm,CategoriaForm,PedidoForm,ProveedorForm,EntradaProductoForm,PedidoUpdateForm
 from .models import Producto,Venta,Usuario,Categoria,Pedido,PedidoProductos,Proveedor,Administrador,EntradaProducto
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail, BadHeaderError, EmailMessage
 from django.conf import settings
 import random # Para generar el número random
 from django.http import JsonResponse
-
+import json
 
 # Create your views here.
 def inicio(request):
@@ -48,7 +49,7 @@ def perfil(request):
 
 def pedidos(request):
     if 'user_id' not in request.session:
-        return redirect('login')  # Redirige si no hay sesión activa
+        return redirect('login')
 
     cedula_usuario = request.session['user_id']
 
@@ -57,15 +58,9 @@ def pedidos(request):
     except Usuario.DoesNotExist:
         return redirect('login')
 
-    # Prefetch los productos de cada pedido
-    pedidos = Pedido.objects.filter(cedula=usuario).order_by('-fecha_Creacion')\
-        .prefetch_related(
-            Prefetch(
-                'productos',
-                    queryset=PedidoProductos.objects.select_related('id_producto')
-                )
-            )
-
+    pedidos = Pedido.objects.filter(cedula=usuario).prefetch_related(
+        Prefetch('productos', queryset=PedidoProductos.objects.select_related('id_producto'))
+    ).order_by('-fecha_Creacion')
 
     return render(request, 'usuario/pedidos.html', {'pedidos': pedidos})
 def login_view(request):
@@ -200,12 +195,13 @@ def productos_view(request):
     else:
         # Mostrar todos los productos
         productos = Producto.objects.all()
-
+    carrito = request.session.get('carrito', {})
+    total_items_carrito = sum(item['cantidad'] for item in carrito.values())
     context = {
         'categorias': categorias,
         'productos': productos,
         'categoria_seleccionada': categoria_seleccionada, # Para marcar el botón activo si lo deseas
-        # El nombre del usuario de la sesión ya está disponible en el request para el header
+        'total_items_carrito': total_items_carrito,
     }
     return render(request, 'productos.html', context)
 
@@ -271,53 +267,62 @@ def actualizar_cantidad(request):
 @transaction.atomic
 def realizar_compra(request):
     carrito = request.session.get('carrito', {})
-    user_id = request.session.get('user_id')  # ID del usuario en sesión
+    metodo = request.session.get('metodo_pago', 'efectivo')
+    user_id = request.session.get('user_id')
 
     if not carrito:
         return render(request, 'usuario/carrito.html', {'error': 'El carrito está vacío.'})
-
+    
     if not user_id:
-        return redirect('login')  # O muestra un mensaje de "inicia sesión"
+        return redirect('login')
 
     usuario = get_object_or_404(Usuario, pk=user_id)
-
     total = sum(Decimal(item['precio']) * item['cantidad'] for item in carrito.values())
 
-    # Crear el pedido
     pedido = Pedido.objects.create(
         fecha_Creacion=timezone.now(),
         estado_pedido='Pendiente',
         total_pedido=total,
-        cedula=usuario
+        cedula=usuario,
+        metodo=metodo
     )
 
     for id_producto, item in carrito.items():
         producto = get_object_or_404(Producto, pk=id_producto)
         cantidad = item['cantidad']
 
-        # Crear relación PedidoProductos
+        if producto.cantidad_producto < cantidad:
+            return render(request, 'usuario/carrito.html', {
+                'error': f"No hay suficiente stock de {producto.descripcion_producto}."
+            })
+
         PedidoProductos.objects.create(
             id_pedido=pedido,
             id_producto=producto,
             cantidad=cantidad
         )
 
-        # Descontar del stock
-        if producto.cantidad_producto < cantidad:
-            return render(request, 'usuario/carrito.html', {'error': f"No hay suficiente stock de {producto.descripcion_producto}."})
-
         producto.cantidad_producto -= cantidad
         producto.save()
 
-        # Actualizar o crear Venta
-        venta, created = Venta.objects.get_or_create(producto=producto)
+        venta, _ = Venta.objects.get_or_create(producto=producto)
         venta.cantidad_vendida += cantidad
         venta.save()
 
-    # Vaciar carrito
     request.session['carrito'] = {}
+    request.session['metodo_pago'] = None
 
     return render(request, 'usuario/compra_exitosa.html', {'pedido': pedido})
+
+
+def seleccionar_metodo_pago(request):
+    if request.method == 'POST':
+        metodo = request.POST.get('metodo')
+        request.session['metodo_pago'] = metodo
+        return redirect('realizar_compra')
+
+    return render(request, 'usuario/metodo_pago.html')
+
 def logout_view(request):
     # Eliminar las variables de sesión del usuario
     if 'user_name' in request.session:
@@ -455,12 +460,36 @@ def admin_view(request):
     return render(request, 'admin/admin.html')
 def admin_view2(request):
     return render(request, 'admin/admin_2.html')
-def admin_view3(request):
-    return render(request, 'admin/admin_3.html')
+def panel_admin(request):
+    # Datos para gráfica de pastel
+    ventas_por_producto = (
+        Venta.objects
+        .values('producto__descripcion_producto')
+        .annotate(total_vendido=Sum('cantidad_vendida'))
+    )
+    labels_pastel = [v['producto__descripcion_producto'] for v in ventas_por_producto]
+    data_pastel = [v['total_vendido'] for v in ventas_por_producto]
 
+    # Datos para gráfica de líneas por fecha
+    ventas_por_fecha = (
+        Venta.objects
+        .values('fecha_venta')
+        .annotate(total_vendido=Sum('cantidad_vendida'))
+        .order_by('fecha_venta')
+    )
+    labels_linea = [v['fecha_venta'].strftime('%Y-%m-%d') for v in ventas_por_fecha]
+    data_linea = [v['total_vendido'] for v in ventas_por_fecha]
+
+    context = {
+        'labels_pastel': json.dumps(labels_pastel),
+        'data_pastel': json.dumps(data_pastel),
+        'labels_linea': json.dumps(labels_linea),
+        'data_linea': json.dumps(data_linea),
+    }
+    return render(request, 'admin/admin_panel.html', context)
 def admin_usuarios_view(request):
     usuarios = Usuario.objects.all()
-    return render(request, 'admin/admin_usuarios.html', {'usuarios': usuarios})
+    return render(request, 'admin/usuario/usuarios.html', {'usuarios': usuarios})
 
 def usuario_create(request):
     """
@@ -476,7 +505,7 @@ def usuario_create(request):
             messages.error(request, 'Hubo un error al crear el usuario. Por favor, revisa los datos.')
     else:
         form = UsuarioForm()
-    return render(request, 'admin/admin_usuario_form.html', {'form': form, 'title': 'Crear Usuario'})
+    return render(request, 'admin/usuario/usuario_form.html', {'form': form, 'title': 'Crear Usuario'})
 
 def usuario_update(request, cedula):
     """
@@ -493,7 +522,7 @@ def usuario_update(request, cedula):
             messages.error(request, 'Hubo un error al actualizar el usuario. Por favor, revisa los datos.')
     else:
         form = UsuarioForm(instance=usuario)
-    return render(request, 'admin/admin_usuario_form.html', {'form': form, 'title': f'Editar Usuario: {usuario.nombre}'})
+    return render(request, 'admin/usuario/usuario_form.html', {'form': form, 'title': f'Editar Usuario: {usuario.nombre}'})
 
 def usuario_delete(request, cedula):
     """
@@ -504,13 +533,13 @@ def usuario_delete(request, cedula):
         usuario.delete()
         messages.success(request, 'Usuario eliminado exitosamente.')
         return redirect('admin_usuarios')
-    return render(request, 'admin/admin_usuario_confirm_delete.html', {'usuario': usuario})
+    return render(request, 'admin/usuario/usuario_confirm_delete.html', {'usuario': usuario})
 
 
 
 def admin_productos_view(request):
     productos = Producto.objects.all()
-    return render(request, 'admin/admin_productos.html', {'productos': productos})
+    return render(request, 'admin/producto/productos.html', {'productos': productos})
 
 def producto_create(request):
     """
@@ -526,7 +555,7 @@ def producto_create(request):
             messages.error(request, 'Hubo un error al crear el producto. Por favor, revisa los datos.')
     else:
         form = ProductoForm()
-    return render(request, 'admin/admin_producto_form.html', {'form': form, 'title': 'Crear Producto'})
+    return render(request, 'admin/producto/producto_form.html', {'form': form, 'title': 'Crear Producto'})
 
 def producto_update(request, id_producto): # Usamos 'pk' porque id_producto es AutoField (primary key)
     """
@@ -543,7 +572,7 @@ def producto_update(request, id_producto): # Usamos 'pk' porque id_producto es A
             messages.error(request, 'Hubo un error al actualizar el producto. Por favor, revisa los datos.')
     else:
         form = ProductoForm(instance=producto)
-    return render(request, 'admin/admin_producto_form.html', {'form': form, 'title': f'Editar Producto: {producto.descripcion_producto}'})
+    return render(request, 'admin/producto/producto_form.html', {'form': form, 'title': f'Editar Producto: {producto.descripcion_producto}'})
 
 def producto_delete(request, id_producto): # Usamos 'pk'
     """
@@ -554,11 +583,11 @@ def producto_delete(request, id_producto): # Usamos 'pk'
         producto.delete()
         messages.success(request, 'Producto eliminado exitosamente.')
         return redirect('admin_productos')
-    return render(request, 'admin/admin_producto_confirm_delete.html', {'producto': producto})
+    return render(request, 'admin/producto/producto_confirm_delete.html', {'producto': producto})
 
 def admin_categorias_view(request):
     categorias = Categoria.objects.all()
-    return render(request, 'admin/admin_categorias.html', {'categorias': categorias})
+    return render(request, 'admin/categoria/categorias.html', {'categorias': categorias})
 
 def categoria_create(request):
     """
@@ -574,7 +603,7 @@ def categoria_create(request):
             messages.error(request, 'Hubo un error al crear la categoría. Por favor, revisa los datos.')
     else:
         form = CategoriaForm()
-        return render(request, 'admin/admin_categoria_form.html', {'form': form, 'title': 'Crear Categoría'}) # O 'categorias/categoria_form.html'
+        return render(request, 'admin/categoria/categoria_form.html', {'form': form, 'title': 'Crear Categoría'}) # O 'categorias/categoria_form.html'
 
 def categoria_update(request, id_categoria): # Usamos 'pk' porque id_categoria es AutoField (primary key)
     """
@@ -591,7 +620,7 @@ def categoria_update(request, id_categoria): # Usamos 'pk' porque id_categoria e
             messages.error(request, 'Hubo un error al actualizar la categoría. Por favor, revisa los datos.')
     else:
         form = CategoriaForm(instance=categoria)
-    return render(request, 'admin/admin_categoria_form.html', {'form': form, 'title': f'Editar Categoría: {categoria.nombre_categoria}'}) # O 'categorias/categoria_form.html'
+    return render(request, 'admin/categoria/categoria_form.html', {'form': form, 'title': f'Editar Categoría: {categoria.nombre_categoria}'}) # O 'categorias/categoria_form.html'
 
 def categoria_delete(request, id_categoria): # Usamos 'pk'
     """
@@ -602,22 +631,284 @@ def categoria_delete(request, id_categoria): # Usamos 'pk'
         categoria.delete()
         messages.success(request, 'Categoría eliminada exitosamente.')
         return redirect('admin_categorias')
-    return render(request, 'admin/admin_categoria_confirm_delete.html', {'categoria': categoria}) # O 'categorias/categoria_confirm_delete.html'
+    return render(request, 'admin/categoria/categoria_confirm_delete.html', {'categoria': categoria}) # O 'categorias/categoria_confirm_delete.html'
 
 
 def admin_pedidos_view(request):
-    return render(request, 'admin/admin_pedidos.html')
+    """
+    Muestra una lista de todos los pedidos, incluyendo los productos dentro de cada uno.
+    """
+    # ¡CAMBIO AQUÍ! Usa 'productos' en lugar de 'productos_del_pedido'
+    pedidos = Pedido.objects.select_related('cedula').prefetch_related('productos__id_producto').order_by('-fecha_Creacion')
+    return render(request, 'admin/pedido/pedidos.html', {'pedidos': pedidos})
+
+def pedido_create(request):
+    """
+    Permite crear un nuevo pedido. (No cambia su lógica original)
+    """
+    if request.method == 'POST':
+        form = PedidoForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Pedido creado exitosamente.')
+            return redirect('admin_pedidos')
+        else:
+            messages.error(request, 'Hubo un error al crear el pedido. Por favor, revisa los datos.')
+    else:
+        form = PedidoForm()
+    return render(request, 'admin/pedido/pedido_form.html', {'form': form, 'title': 'Crear Pedido'})
+
+def pedido_update(request, pk):
+    """
+    Permite editar un pedido existente, solo el estado del pedido.
+    """
+    pedido = get_object_or_404(Pedido, pk=pk)
+    if request.method == 'POST':
+        form = PedidoUpdateForm(request.POST, instance=pedido)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f'Estado del Pedido #{pedido.id_pedido} actualizado exitosamente.')
+            return redirect('admin_pedidos') # O 'pedido_list', según tu configuración de URL
+        else:
+            messages.error(request, 'Hubo un error al actualizar el estado del pedido. Por favor, revisa los datos.')
+    else:
+        form = PedidoUpdateForm(instance=pedido)
+    
+    # ¡CAMBIO AQUÍ! Usa 'productos' en lugar de 'productos_en_pedido'
+    productos_en_pedido_data = [] # Lista para almacenar los productos con su subtotal
+    for pp in pedido.productos.select_related('id_producto'):
+        subtotal = None
+        if pp.id_producto.valor_producto and pp.cantidad:
+            subtotal = pp.id_producto.valor_producto * pp.cantidad
+        productos_en_pedido_data.append({
+            'producto': pp.id_producto,
+            'cantidad': pp.cantidad,
+            'subtotal': subtotal # Añadir el subtotal aquí
+        })
+
+    return render(request, 'admin/pedido/pedido_form.html', {
+        'form': form,
+        'title': f'Editar Pedido #{pedido.id_pedido}',
+        'pedido_obj': pedido,
+        'productos_en_pedido': productos_en_pedido_data, # Pasamos la nueva lista
+        'read_only_fields': ['total_pedido', 'cedula']
+    })
+def pedido_delete(request, pk):
+    """
+    Permite eliminar un pedido. (No cambia)
+    """
+    pedido = get_object_or_404(Pedido, pk=pk)
+    if request.method == 'POST':
+        pedido.delete()
+        messages.success(request, 'Pedido eliminado exitosamente.')
+        return redirect('pedido_list')
+    return render(request, 'admin/pedido/pedido_confirm_delete.html', {'pedido': pedido})
 
 
 
 def admin_proveedores_view(request):
-    return render(request, 'admin/admin_proveedores.html')
+    """
+    Muestra una lista de todos los proveedores.
+    """
+    proveedores = Proveedor.objects.all().order_by('nombre_proveedor')
+    return render(request, 'admin/proveedor/proveedores.html', {'proveedores': proveedores})
+
+def proveedor_create(request):
+    """
+    Permite crear un nuevo proveedor.
+    """
+    if request.method == 'POST':
+        form = ProveedorForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Proveedor creado exitosamente.')
+            return redirect('admin_proveedores') # Redirige a la lista de proveedores
+        else:
+            messages.error(request, 'Hubo un error al crear el proveedor. Por favor, revisa los datos.')
+    else:
+        form = ProveedorForm()
+    return render(request, 'admin/proveedor/proveedor_form.html', {'form': form, 'title': 'Crear Proveedor'})
+
+def proveedor_update(request, pk): # Usamos 'pk' porque id_proveedor es AutoField (primary key)
+    """
+    Permite editar un proveedor existente.
+    """
+    proveedor = get_object_or_404(Proveedor, pk=pk)
+    if request.method == 'POST':
+        form = ProveedorForm(request.POST, instance=proveedor)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Proveedor actualizado exitosamente.')
+            return redirect('admin_proveedores') # Redirige a la lista de proveedores
+        else:
+            messages.error(request, 'Hubo un error al actualizar el proveedor. Por favor, revisa los datos.')
+    else:
+        form = ProveedorForm(instance=proveedor)
+    return render(request, 'admin/proveedor/proveedor_form.html', {'form': form, 'title': f'Editar Proveedor: {proveedor.nombre_proveedor}'})
+
+def proveedor_delete(request, pk): # Usamos 'pk'
+    """
+    Permite eliminar un proveedor.
+    """
+    proveedor = get_object_or_404(Proveedor, pk=pk)
+    if request.method == 'POST':
+        proveedor.delete()
+        messages.success(request, 'Proveedor eliminado exitosamente.')
+        return redirect('admin_proveedores') # Redirige a la lista de proveedores
+    # Nota: Aquí se renderiza el template de confirmación con la ruta corregida
+    return render(request, 'admin/proveedor/proveedor_confirm_delete.html', {'proveedor': proveedor})
+
 
 def admin_entradas_view(request):
-    return render(request, 'admin/admin_entradas.html')
+    """
+    Muestra una lista de todas las entradas de productos.
+    """
+    entradas = EntradaProducto.objects.all().order_by('-fecha_entrada', '-id_entrada_producto')
+    return render(request, 'admin/entrada/entradas.html', {'entradas': entradas})
 
-def admin_salidas_view(request):
-    return render(request, 'admin/admin_salidas.html')
+def entrada_create(request):
+    if request.method == 'POST':
+        form = EntradaProductoForm(request.POST)
+        if form.is_valid():
+            entrada = form.save(commit=False) # No guardar aún para poder calcular
+
+            # Obtener el producto y calcular el costo total de la entrada
+            producto_asociado = entrada.id_producto
+            cantidad_ingresada = entrada.cantidad_producto
+            # Asumo que valor_producto es el costo unitario para la entrada
+            costo_unitario_producto = producto_asociado.valor_producto
+            
+            # Calcular el costo total de la entrada
+            entrada.costo_entrada = costo_unitario_producto * Decimal(cantidad_ingresada)
+
+            # Guardar la entrada de producto
+            entrada.save()
+
+            # Sumar la cantidad al producto en la tabla de Productos
+            producto_asociado.cantidad_producto += cantidad_ingresada
+            producto_asociado.save()
+
+            messages.success(request, 'Entrada de producto creada exitosamente y cantidad de producto actualizada.')
+            return redirect('admin_entradas')
+        else:
+            messages.error(request, 'Hubo un error al crear la entrada. Por favor, revisa los datos.')
+    else:
+        form = EntradaProductoForm()
+    return render(request, 'admin/entrada/entrada_form.html', {'form': form, 'title': 'Registrar Entrada de Producto'})
+
+def entrada_update(request, pk):
+    entrada = get_object_or_404(EntradaProducto, pk=pk)
+    # Guardamos la cantidad original para calcular la diferencia
+    cantidad_original = entrada.cantidad_producto
+    producto_original = entrada.id_producto # También el producto original
+
+    if request.method == 'POST':
+        form = EntradaProductoForm(request.POST, instance=entrada)
+        if form.is_valid():
+            entrada_actualizada = form.save(commit=False)
+
+            # Si el producto asociado ha cambiado, revertir el cambio de cantidad en el producto original
+            if producto_original != entrada_actualizada.id_producto:
+                producto_original.cantidad_producto -= cantidad_original
+                producto_original.save()
+
+            # Obtener el producto actual y la nueva cantidad
+            producto_actual = entrada_actualizada.id_producto
+            cantidad_nueva = entrada_actualizada.cantidad_producto
+
+            # Recalcular el costo total de la entrada con los nuevos valores
+            costo_unitario_producto = producto_actual.valor_producto
+            entrada_actualizada.costo_entrada = costo_unitario_producto * Decimal(cantidad_nueva)
+
+            entrada_actualizada.save()
+
+            # Actualizar la cantidad en el producto
+            if producto_original == entrada_actualizada.id_producto: # Mismo producto
+                diferencia_cantidad = cantidad_nueva - cantidad_original
+                producto_actual.cantidad_producto += diferencia_cantidad
+            else: # Producto diferente
+                producto_actual.cantidad_producto += cantidad_nueva
+
+            producto_actual.save()
+
+            messages.success(request, 'Entrada de producto actualizada exitosamente y cantidad de producto ajustada.')
+            return redirect('admin_entradas')
+        else:
+            messages.error(request, 'Hubo un error al actualizar la entrada. Por favor, revisa los datos.')
+    else:
+        form = EntradaProductoForm(instance=entrada)
+    return render(request, 'admin/entrada/entrada_form.html', {'form': form, 'title': f'Editar Entrada: {entrada.id_entrada_producto}'})
+
+
+def calcular_costo_entrada_ajax(request):
+    if request.method == 'GET' and request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        producto_id = request.GET.get('producto_id')
+        cantidad = request.GET.get('cantidad')
+
+        # --- Impresiones de Depuración ---
+        print(f"DEBUG: AJAX Request received - producto_id: {producto_id}, cantidad: {cantidad}")
+
+        if not producto_id or not cantidad:
+            print("DEBUG: Missing producto_id or cantidad. Returning 400.")
+            return JsonResponse({'error': 'producto_id y cantidad son requeridos.'}, status=400)
+
+        try:
+            producto = Producto.objects.get(pk=producto_id)
+            print(f"DEBUG: Found Product: {producto.descripcion_producto} (ID: {producto.id_producto})")
+            print(f"DEBUG: Product valor_producto (costo unitario): {producto.valor_producto}")
+
+            cantidad_num = Decimal(cantidad)
+            print(f"DEBUG: Converted cantidad to Decimal: {cantidad_num}")
+
+            if cantidad_num <= 0:
+                print("DEBUG: Quantity is zero or less. Returning 400.")
+                return JsonResponse({'error': 'La cantidad debe ser mayor que cero.'}, status=400)
+
+            costo_unitario = producto.valor_producto
+
+            if costo_unitario is None:
+                print("DEBUG: Product valor_producto is None. Returning 400.")
+                return JsonResponse({'error': 'El producto seleccionado no tiene un valor de producto definido.'}, status=400)
+
+            # Asegurarse de que costo_unitario también sea Decimal para la multiplicación
+            if not isinstance(costo_unitario, Decimal):
+                try:
+                    costo_unitario = Decimal(str(costo_unitario)) # Convertir a Decimal si no lo es
+                    print(f"DEBUG: Converted costo_unitario to Decimal: {costo_unitario}")
+                except Exception as e:
+                    print(f"ERROR: Could not convert costo_unitario to Decimal: {costo_unitario}, Error: {e}")
+                    return JsonResponse({'error': 'Error interno al procesar el costo unitario del producto.'}, status=500)
+
+
+            costo_total = costo_unitario * cantidad_num
+            print(f"DEBUG: Calculated costo_total: {costo_total}")
+
+            return JsonResponse({'costo_total': str(costo_total)})
+        except Producto.DoesNotExist:
+            print(f"DEBUG: Producto with ID {producto_id} not found. Returning 404.")
+            return JsonResponse({'error': 'Producto no encontrado.'}, status=404)
+        except (ValueError, TypeError) as e:
+            print(f"DEBUG: ValueError or TypeError: {e}. Returning 400.")
+            return JsonResponse({'error': f'Cantidad o ID de producto inválidos. Detalle: {e}'}, status=400)
+        except Exception as e:
+            print(f"DEBUG: Unexpected error: {e}. Returning 500.")
+            return JsonResponse({'error': f'Error interno del servidor: {e}'}, status=500)
+    print("DEBUG: Request is not GET or not XMLHttpRequest. Returning 400.")
+    return JsonResponse({'error': 'Solicitud inválida.'}, status=400)
+
+# ... (tu vista pedido_delete, admin_view, etc.)
+def entrada_delete(request, pk): # Usamos 'pk'
+    """
+    Permite eliminar una entrada de producto.
+    """
+    entrada = get_object_or_404(EntradaProducto, pk=pk)
+    if request.method == 'POST':
+        entrada.delete()
+        messages.success(request, 'Entrada de producto eliminada exitosamente.')
+        return redirect('admin_entradas') # Redirige a la lista de entradas
+    return render(request, 'admin/entrada/entrada_confirm_delete.html', {'entrada': entrada})
+
+
 
 def admin_ventas_view(request):
     return render(request, 'admin/admin_ventas.html')

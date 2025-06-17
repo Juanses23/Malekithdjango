@@ -17,7 +17,8 @@
 body {
     font-family: 'lato', sans-serif;
     font-weight: bold;
-    background-image: url(../img/productosaseoanimado1.png);
+    background-color: white;
+    /*background-image: url(../img/productosaseoanimado1.png);*/
 }
 .envio-correos{
     padding-top: 250px;
@@ -71,6 +72,7 @@ body {
     margin-bottom: 1rem;
 }
 .contenedor {
+    z-index: 1;
     position: fixed;
     display: flex;
     width: 100%;
@@ -95,11 +97,11 @@ body {
     color: black;
 }
 .logo {
-    width: 220px;
-    height: 220px;
+    width: 135px;
+    height: 120px;
     position: relative;
-    margin-left: 150px;
-    margin-top: -25px;
+    margin-left: 50px;
+    margin-top: 25px;
     margin-right: 500px;
 }
 .icono {
@@ -111,10 +113,31 @@ body {
 main {
     padding: 2rem;
 }
+/* Estilo para campos de solo lectura */
+input[readonly] {
+    background-color: #e9e9e9;
+    cursor: not-allowed;
+}
+
+/* Puedes darle el mismo estilo que los inputs normales si lo deseas */
+form input[type="text"],
+form input[type="email"],
+form input[type="date"],
+form input[type="password"],
+form input[type="number"],
+form select,
+#id_costo_entrada_calculado { /* <-- Añade el ID de tu campo calculado aquí */
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
 .admin-buttom{
     padding-top: 50px;
     padding-left: 250px;
-    display: block;
+    position: relative;
 }
 .admin-buttom .admin-drill{
     height: 250px;
@@ -125,6 +148,8 @@ main {
     padding: 60px;
     text-decoration: none;
     color: white;
+    position: relative;
+    border-radius: 16px;
 }
 .admin-drill:hover {
     color: black;

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <title>Gestionar Pedidos</title>
+    <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+    <link rel="icon" href="{% static 'icon/Malekith.png' %}" type="image/x-icon">
+    <style>
+        /* Estilos adicionales para los productos dentro del pedido */
+        .productos-lista {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            font-size: 0.9em;
+            color: #555;
+        }
+        .productos-lista li {
+            margin-bottom: 2px;
+        }
+        .productos-lista li:last-child {
+            margin-bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="contenedor">
+            <img src="{% static 'icon/Malekith-white.png' %}" alt="logo" class="logo">
+            <a href="{% url 'admin_view2' %}">Volver</a>
+        </nav>
+    </header>
+    <main>
+        <section>
+            <h1 class="admin-title">Gestionar Pedidos</h1>
+            <p class="admin-description">Desde aquí puedes gestionar los pedidos de tu sitio.</p>
+
+            {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
+            <a href="{% url 'pedido_create' %}" class="add-button">Crear Nuevo Pedido</a>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID Pedido</th>
+                            <th>Fecha Creación</th>
+                            <th>Estado</th>
+                            <th>Total</th>
+                            <th>Cliente (Cédula)</th>
+                            <th>Productos</th> {# Nueva columna #}
+                            <th>Método de pago</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for pedido in pedidos %}
+                        <tr>
+                            <td>{{ pedido.id_pedido }}</td>
+                            <td>{{ pedido.fecha_Creacion|date:"d/m/Y H:i" }}</td>
+                            <td>{{ pedido.estado_pedido }}</td>
+                            <td>${{ pedido.total_pedido|floatformat:2 }}</td>
+                            <td>{{ pedido.cedula.nombre }} {{ pedido.cedula.apellido }} ({{ pedido.cedula.cedula }})</td>
+                            <td>
+                                {# ¡CAMBIO AQUÍ! Usa 'productos' #}
+                                {% if pedido.productos.all %}
+                                    <ul class="productos-lista">
+                                        {# ¡CAMBIO AQUÍ! Usa 'productos' #}
+                                        {% for pp in pedido.productos.all %}
+                                            <li>{{ pp.id_producto.descripcion_producto }} (x{{ pp.cantidad }})</li>
+                                        {% endfor %}
+                                    </ul>
+                                {% else %}
+                                    Sin productos
+                                {% endif %}
+                            </td>
+                            <td>{{ pedido.metodo|capfirst }}</td>
+                            <td class="action-buttons">
+                                <a href="{% url 'pedido_update' pedido.id_pedido %}" class="edit-btn" style="padding: 13px 26px;">Editar Estado</a> {# Texto actualizado #}
+                                <form action="{% url 'pedido_delete' pedido.id_pedido %}" method="post" style="display:inline; padding: 0;";">
+                                    {% csrf_token %}
+                                    <button type="submit" class="delete-btn" onclick="return confirm('¿Estás seguro de que quieres eliminar este pedido?')">Eliminar</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7">No hay pedidos registrados.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
