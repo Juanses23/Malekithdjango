@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% load static %}
+    {% load custom_filters %}
     <title>Gestionar Entradas de Producto</title>
     <link rel="stylesheet" href="{% static 'css/admin.css' %}">
     <link rel="icon" href="{% static 'icon/Malekith.png' %}" type="image/x-icon">
@@ -11,7 +12,7 @@
 <body>
     <header>
         <nav class="contenedor">
-            <img src="{% static 'icon/Malekith-white.png' %}" alt="logo" class="logo">
+            <img src="{% static 'icon/MALEKITH-1.png' %}" alt="logo" class="logo">
             <a href="{% url 'admin_view2' %}">Volver</a> {# Asumiendo que 'admin_view' existe y te lleva al panel principal #}
         </nav>
     </header>
@@ -46,37 +47,62 @@
                     </thead>
                     <tbody>
                         {% for entrada in entradas %}
-                        <tr>
-                            <td>{{ entrada.id_entrada_producto }}</td>
-                            <td>{{ entrada.descripcion }}</td>
-                            <td>{{ entrada.fecha_entrada|date:"d/m/Y" }}</td>
-                            <td>{{ entrada.cantidad_producto }}</td>
-                            <td>${{ entrada.costo_entrada|floatformat:2 }}</td> {# Asumiendo que has cambiado a DecimalField #}
-                            <td>
-                                {% if entrada.id_proveedor %}
-                                    {{ entrada.id_proveedor.nombre_proveedor }}
-                                {% else %}
-                                    N/A (Eliminado)
-                                {% endif %}
-                            </td>
-                            <td>{{ entrada.id_producto.descripcion_producto }} (ID: {{ entrada.id_producto.id_producto }})</td>
-                            <td class="action-buttons">
-                                <a href="{% url 'entrada_update' entrada.id_entrada_producto %}" class="edit-btn" style="padding: 13px 26px;">Editar</a>
-                                <form action="{% url 'entrada_delete' entrada.id_entrada_producto %}" method="post" style="display:inline; padding: 0;">
-                                    {% csrf_token %}
-                                    <button type="submit" class="delete-btn" onclick="return confirm('¿Estás seguro de que quieres eliminar esta entrada de producto?')">Eliminar</button>
-                                </form>
-                            </td>
-                        </tr>
+                            <tr class="entrada-fila" onclick="toggleProductos(this)">
+                                <td>{{ entrada.id_entrada_producto }}</td>
+                                <td>{{ entrada.descripcion }}</td>
+                                <td>{{ entrada.fecha_entrada|date:"d/m/Y" }}</td>
+                                <td>
+                                    {{ entrada.detalles.all|length|default:"0" }} productos
+                                </td>
+                                <td>
+                                    ${{ totales|dict_get:entrada.id_entrada_producto|floatformat:2 }}
+                                </td>
+                                <td>
+                                    {% if entrada.id_proveedor %}
+                                        {{ entrada.id_proveedor.nombre_proveedor }}
+                                    {% else %}
+                                        N/A (Eliminado)
+                                    {% endif %}
+                                </td>
+                                <td>-</td> {# Se eliminó la columna producto directo #}
+                                <td class="action-buttons">
+                                    <a href="{% url 'entrada_update' entrada.id_entrada_producto %}" class="edit-btn" style="padding: 13px 26px;">Editar</a>
+                                    <form action="{% url 'entrada_delete' entrada.id_entrada_producto %}" method="post" style="display:inline; padding: 0;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="delete-btn" onclick="return confirm('¿Estás seguro de que quieres eliminar esta entrada de producto?')">Eliminar</button>
+                                    </form>
+                                </td>
+                            </tr>
+
+                            <tr class="productos-fila" style="display: none;">
+                                <td colspan="8">
+                                    <strong>Productos de esta entrada:</strong>
+                                    <ul>
+                                        {% for detalle in entrada.detalles.all %}
+                                            <li>{{ detalle.producto.descripcion_producto }} – Cantidad: {{ detalle.cantidad }} – Costo: ${{ detalle.costo_total }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </td>
+                            </tr>
                         {% empty %}
-                        <tr>
-                            <td colspan="8">No hay entradas de productos registradas.</td>
-                        </tr>
+                            <tr>
+                                <td colspan="8">No hay entradas de productos registradas.</td>
+                            </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
         </section>
     </main>
+    <script>
+        function toggleProductos(filaEntrada) {
+            const filaProductos = filaEntrada.nextElementSibling;
+            if (filaProductos.style.display === "none") {
+                filaProductos.style.display = "table-row";
+            } else {
+                filaProductos.style.display = "none";
+            }
+        }
+    </script>
 </body>
 </html>

@@ -15,3 +15,7 @@ def times(number):
         return range(1, number + 1)
     except (ValueError, TypeError):
         return range(0) 
+    
+@register.filter
+def dict_get(d, key):
+    return d.get(key, '')

@@ -7,43 +7,7 @@
     <title>Compra Exitosa</title>
     <link rel="stylesheet" href="{% static 'css/carrito.css' %}">
     <style>
-        .exito-container {
-            max-width: 700px;
-            margin: 60px auto;
-            background-color: rgba(255, 255, 255, 0.85);
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 0 15px rgba(0, 128, 0, 0.3);
-            text-align: center;
-            font-family: 'Poppins', sans-serif;
-        }
-
-        .exito-container h1 {
-            color: seagreen;
-            margin-bottom: 20px;
-        }
-
-        .exito-container p {
-            font-size: 1.2rem;
-            color: #333;
-            margin-bottom: 15px;
-        }
-
-        .exito-container a {
-            display: inline-block;
-            margin-top: 25px;
-            background-color: #26874E;
-            color: white;
-            padding: 12px 25px;
-            text-decoration: none;
-            border-radius: 10px;
-            transition: background-color 0.3s ease;
-            border: 1px solid white;
-        }
-
-        .exito-container a:hover {
-            background-color: #1f6f3f;
-        }
+        
     </style>
 </head>
 <body>
@@ -52,6 +16,23 @@
         <p>Tu pedido <strong>#{{ pedido.id_pedido }}</strong> ha sido registrado correctamente.</p>
         <p><strong>Método de pago:</strong> {{ pedido.metodo|capfirst }}</p>
         <a href="{% url 'productos' %}">Volver a la tienda</a>
+        <h2>Productos Comprados</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in pedido.productos.all %}
+                    <tr>
+                        <td>{{ p.id_producto.descripcion_producto }}</td>
+                        <td>{{ p.cantidad }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </body>
 </html>

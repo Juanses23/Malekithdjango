@@ -7,39 +7,7 @@
     <title>Carrito</title>
     <link rel="icon" href="{% static 'icon/Malekith.png' %}" type="image/x-icon">
     <link rel="stylesheet" href="{% static 'css/carrito.css' %}">
-    <script>
-        function vaciarCarrito() {
-            fetch("{% url 'vaciar_carrito' %}")
-                .then(res => res.json())
-                .then(data => {
-                    if (data.ok) location.reload();
-                });
-        }
-
-        function eliminarItem(id_producto) {
-            fetch(`/eliminar_item_carrito/${id_producto}/`)
-                .then(res => res.json())
-                .then(data => {
-                    if (data.ok) location.reload();
-                });
-        }
-
-        function actualizarCantidad(id_producto) {
-            const cantidad = document.getElementById('cantidad-' + id_producto).value;
-
-            fetch("{% url 'actualizar_cantidad' %}", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-CSRFToken': '{{ csrf_token }}'
-                },
-                body: `id_producto=${id_producto}&cantidad=${cantidad}`
-            }).then(res => res.json())
-              .then(data => {
-                  if (data.ok) location.reload();
-              });
-        }
-    </script>
+    
 </head>
 <body>
     <a href="{% url 'productos' %}" class="volver">Volver</a>
@@ -85,6 +53,38 @@
         {% csrf_token %}
         <input type="submit" value="Finalizar compra">
     </form>
+    <script>
+        function vaciarCarrito() {
+            fetch("{% url 'vaciar_carrito' %}")
+                .then(res => res.json())
+                .then(data => {
+                    if (data.ok) location.reload();
+                });
+        }
 
+        function eliminarItem(id_producto) {
+            fetch(`/eliminar_item_carrito/${id_producto}/`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.ok) location.reload();
+                });
+        }
+
+        function actualizarCantidad(id_producto) {
+            const cantidad = document.getElementById('cantidad-' + id_producto).value;
+
+            fetch("{% url 'actualizar_cantidad' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: `id_producto=${id_producto}&cantidad=${cantidad}`
+            }).then(res => res.json())
+              .then(data => {
+                  if (data.ok) location.reload();
+              });
+        }
+    </script>
 </body>
 </html>

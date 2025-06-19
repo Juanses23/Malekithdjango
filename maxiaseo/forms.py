@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
-from .models import Usuario,Producto,Categoria,Pedido,Proveedor,EntradaProducto,PedidoProductos
+from .models import Usuario,Producto,Categoria,Pedido,Proveedor,EntradaProducto,PedidoProductos,EntradaProductoDetalle
 class FormularioLogin(AuthenticationForm):
     pass
 
@@ -53,19 +53,18 @@ class PedidoForm(forms.ModelForm):
 
 # NUEVO FORMULARIO: PedidoUpdateForm para editar solo el estado
 class PedidoUpdateForm(forms.ModelForm):
+    ESTADOS = [
+        ('Pendiente', 'Pendiente'),
+        ('Activo', 'Activo'),
+        ('Entregado', 'Entregado'),
+        ('Cancelado', 'Cancelado'),
+    ]
+
+    estado_pedido = forms.ChoiceField(choices=ESTADOS, widget=forms.Select(attrs={'class': 'estado-select'}))
+
     class Meta:
         model = Pedido
-        fields = ['estado_pedido'] # ¡Solo el campo estado_pedido!
-        # Opcional: Widgets para estado_pedido
-        # widgets = {
-        #     'estado_pedido': forms.Select(choices=[
-        #         ('Pendiente', 'Pendiente'),
-        #         ('Procesando', 'Procesando'),
-        #         ('Enviado', 'Enviado'),
-        #         ('Entregado', 'Entregado'),
-        #         ('Cancelado', 'Cancelado'),
-        #     ])
-        # }
+        fields = ['estado_pedido']
 
 
 class ProveedorForm(forms.ModelForm):
@@ -81,11 +80,11 @@ class ProveedorForm(forms.ModelForm):
 class EntradaProductoForm(forms.ModelForm):
     class Meta:
         model = EntradaProducto
-        fields = [
-            'descripcion', 'fecha_entrada', 'cantidad_producto',
-            # 'costo_entrada',  <-- ¡Remover este campo del formulario!
-            'id_proveedor', 'id_producto'
-        ]
+        fields = ['descripcion', 'fecha_entrada', 'id_proveedor']
         widgets = {
             'fecha_entrada': forms.DateInput(attrs={'type': 'date'}),
         }
+class EntradaProductoDetalleForm(forms.ModelForm):
+    class Meta:
+        model = EntradaProductoDetalle
+        fields = ['producto', 'cantidad']

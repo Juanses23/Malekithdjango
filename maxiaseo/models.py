@@ -55,19 +55,26 @@ class Proveedor(models.Model):
 
 class EntradaProducto(models.Model):
     id_entrada_producto = models.AutoField(primary_key=True)
-    descripcion = models.CharField(max_length=100) # Reconsiderar si es necesario
+    descripcion = models.CharField(max_length=100)
     fecha_entrada = models.DateField()
-    cantidad_producto = models.IntegerField()
-    # ¡Recomendación! Cambiar a DecimalField si es un valor monetario
-    # costo_entrada = models.IntegerField()
-    costo_entrada = models.DecimalField(max_digits=10, decimal_places=2) # Sugerido
-
     id_proveedor = models.ForeignKey(Proveedor, on_delete=models.SET_NULL, blank=True, null=True)
-    id_producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return f"Entrada #{self.id_entrada_producto} - {self.descripcion}"
 
+class EntradaProductoDetalle(models.Model):
+    entrada = models.ForeignKey(EntradaProducto, on_delete=models.CASCADE, related_name='detalles')
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    cantidad = models.PositiveIntegerField()
+    costo_total = models.DecimalField(max_digits=10, decimal_places=2)
+
+    class Meta:
+        unique_together = ('entrada', 'producto')
 
     def __str__(self):
-        return f"Entrada {self.id_entrada_producto} - {self.nombre_producto}"
+        return f"Entrada {self.entrada.id_entrada_producto} - {self.producto.descripcion_producto} x{self.cantidad}"
+
+
 class Pedido(models.Model):
     id_pedido = models.AutoField(primary_key=True)
     fecha_Creacion = models.DateTimeField(auto_now_add=True)

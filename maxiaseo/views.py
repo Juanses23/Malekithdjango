@@ -7,8 +7,10 @@ from django.db import transaction
 from django.utils import timezone
 from django.db.models import Sum
 from django.db.models import Prefetch
-from .forms import FormularioLogin,UsuarioForm,ProductoForm,CategoriaForm,PedidoForm,ProveedorForm,EntradaProductoForm,PedidoUpdateForm
-from .models import Producto,Venta,Usuario,Categoria,Pedido,PedidoProductos,Proveedor,Administrador,EntradaProducto
+from django.forms import modelformset_factory
+
+from .forms import FormularioLogin,UsuarioForm,ProductoForm,CategoriaForm,PedidoForm,ProveedorForm,EntradaProductoForm,PedidoUpdateForm,EntradaProductoDetalleForm
+from .models import Producto,Venta,Usuario,Categoria,Pedido,PedidoProductos,Proveedor,Administrador,EntradaProducto,EntradaProductoDetalle
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail, BadHeaderError, EmailMessage
 from django.conf import settings
@@ -760,41 +762,60 @@ def proveedor_delete(request, pk): # Usamos 'pk'
 
 
 def admin_entradas_view(request):
-    """
-    Muestra una lista de todas las entradas de productos.
-    """
-    entradas = EntradaProducto.objects.all().order_by('-fecha_entrada', '-id_entrada_producto')
-    return render(request, 'admin/entrada/entradas.html', {'entradas': entradas})
+    entradas = EntradaProducto.objects.prefetch_related(
+        Prefetch('detalles', queryset=EntradaProductoDetalle.objects.select_related('producto'))
+    ).order_by('-fecha_entrada', '-id_entrada_producto')
 
+    # Creamos un diccionario con los totales
+    totales = {}
+    for entrada in entradas:
+        total = sum((detalle.costo_total for detalle in entrada.detalles.all()), Decimal('0.00'))
+        totales[entrada.id_entrada_producto] = total
+
+    return render(request, 'admin/entrada/entradas.html', {
+        'entradas': entradas,
+        'totales': totales
+    })
 def entrada_create(request):
+    DetalleFormSet = modelformset_factory(EntradaProductoDetalle, form=EntradaProductoDetalleForm, extra=1, can_delete=True)
+
     if request.method == 'POST':
-        form = EntradaProductoForm(request.POST)
-        if form.is_valid():
-            entrada = form.save(commit=False) # No guardar aún para poder calcular
+        entrada_form = EntradaProductoForm(request.POST)
+        formset = DetalleFormSet(request.POST, queryset=EntradaProductoDetalle.objects.none())
 
-            # Obtener el producto y calcular el costo total de la entrada
-            producto_asociado = entrada.id_producto
-            cantidad_ingresada = entrada.cantidad_producto
-            # Asumo que valor_producto es el costo unitario para la entrada
-            costo_unitario_producto = producto_asociado.valor_producto
-            
-            # Calcular el costo total de la entrada
-            entrada.costo_entrada = costo_unitario_producto * Decimal(cantidad_ingresada)
+        if entrada_form.is_valid() and formset.is_valid():
+            entrada = entrada_form.save()
 
-            # Guardar la entrada de producto
-            entrada.save()
+            for form in formset:
+                if form.cleaned_data:
+                    producto = form.cleaned_data['producto']
+                    cantidad = form.cleaned_data['cantidad']
+                    costo_total = producto.valor_producto * Decimal(cantidad)
 
-            # Sumar la cantidad al producto en la tabla de Productos
-            producto_asociado.cantidad_producto += cantidad_ingresada
-            producto_asociado.save()
+                    EntradaProductoDetalle.objects.create(
+                        entrada=entrada,
+                        producto=producto,
+                        cantidad=cantidad,
+                        costo_total=costo_total
+                    )
 
-            messages.success(request, 'Entrada de producto creada exitosamente y cantidad de producto actualizada.')
+                    # Actualizar stock
+                    producto.cantidad_producto += cantidad
+                    producto.save()
+
+            messages.success(request, 'Entrada registrada con múltiples productos.')
             return redirect('admin_entradas')
         else:
-            messages.error(request, 'Hubo un error al crear la entrada. Por favor, revisa los datos.')
+            messages.error(request, 'Hay errores en el formulario.')
     else:
-        form = EntradaProductoForm()
-    return render(request, 'admin/entrada/entrada_form.html', {'form': form, 'title': 'Registrar Entrada de Producto'})
+        entrada_form = EntradaProductoForm()
+        formset = DetalleFormSet(queryset=EntradaProductoDetalle.objects.none())
+
+    return render(request, 'admin/entrada/entrada_form.html', {
+        'entrada_form': entrada_form,
+        'formset': formset,
+        'title': 'Registrar Entrada de Productos'
+    })
 
 def entrada_update(request, pk):
     entrada = get_object_or_404(EntradaProducto, pk=pk)
