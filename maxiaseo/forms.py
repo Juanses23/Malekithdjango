@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
-from .models import Usuario,Producto,Categoria,Pedido,Proveedor,EntradaProducto,PedidoProductos,EntradaProductoDetalle
+from .models import Usuario,Producto,Categoria,Pedido,Proveedor,EntradaProducto,PedidoProductos,EntradaProductoDetalle,Estado
 class FormularioLogin(AuthenticationForm):
     pass
 
@@ -53,19 +53,20 @@ class PedidoForm(forms.ModelForm):
 
 # NUEVO FORMULARIO: PedidoUpdateForm para editar solo el estado
 class PedidoUpdateForm(forms.ModelForm):
-    ESTADOS = [
-        ('Pendiente', 'Pendiente'),
-        ('Activo', 'Activo'),
-        ('Entregado', 'Entregado'),
-        ('Cancelado', 'Cancelado'),
-    ]
-
-    estado_pedido = forms.ChoiceField(choices=ESTADOS, widget=forms.Select(attrs={'class': 'estado-select'}))
+    estado_pedido = forms.ModelChoiceField(
+        queryset=Estado.objects.all(),
+        widget=forms.Select(attrs={'class': 'estado-select'}),
+        label='Estado'
+    )
+    descripcion = forms.CharField(
+        required=True,
+        widget=forms.Textarea(attrs={'rows': 3, 'placeholder': 'Motivo del cambio'}),
+        label='Descripción del cambio'
+    )
 
     class Meta:
         model = Pedido
         fields = ['estado_pedido']
-
 
 class ProveedorForm(forms.ModelForm):
     class Meta:
@@ -73,10 +74,6 @@ class ProveedorForm(forms.ModelForm):
         fields = [
             'nombre_proveedor', 'email', 'razon_social', 'nit', 'telefono'
         ]
-        # Si quisieras asegurar que el NIT se muestre como un campo de texto y no numérico con flechas:
-        # widgets = {
-        #     'nit': forms.TextInput(attrs={'type': 'text'})
-        # }
 class EntradaProductoForm(forms.ModelForm):
     class Meta:
         model = EntradaProducto
@@ -84,6 +81,7 @@ class EntradaProductoForm(forms.ModelForm):
         widgets = {
             'fecha_entrada': forms.DateInput(attrs={'type': 'date'}),
         }
+        
 class EntradaProductoDetalleForm(forms.ModelForm):
     class Meta:
         model = EntradaProductoDetalle

@@ -6,23 +6,33 @@
     {% load static %}
     {% load custom_filters %}
     <title>{{ title }}</title>
-    <link rel="stylesheet" href="{% static 'css/admin.css' %}">
+    <link rel="stylesheet" href="{% static 'css/admin2.css' %}">
     <link rel="icon" href="{% static 'icon/Malekith.png' %}" type="image/x-icon">
 </head>
 <body>
     <header>
         <nav class="contenedor">
             <img src="{% static 'icon/MALEKITH-1.png' %}" alt="logo" class="logo">
+            {% if request.session.user_name %}
+                <a class="welcome-message">Hola Admin, {{ request.session.user_name }}</a>
+                <a href="{% url 'logout' %}" class="logout-button">Cerrar sesión</a>
+            {% endif %}
             <a href="{% url 'admin_pedidos' %}">Volver a Pedidos</a>
         </nav>
     </header>
     <main>
+        <section class="admin-container">
+            <a href="{% url 'admin_view' %}" class="admin-link">Usuarios</a>
+            <a href="{% url 'admin_view2' %}" class="admin-link">Productos</a>
+            <a href="{% url 'panel_admin' %}" class="admin-link">Ventas</a>
+            <a class="admin-link" href="https://www.youtube.com">Como funciona</a>
+        </section>
         <section>
             <h1 class="admin-title">{{ title }}</h1>
             <p class="admin-description">Desde aquí puedes editar el estado del pedido y ver sus detalles.</p>
 
             {% if messages %}
-                <ul class="messages">
+                <ul class="messages" style="width: 100%; text-align: center;">
                     {% for message in messages %}
                         <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
                     {% endfor %}
@@ -71,15 +81,31 @@
 
             <form method="post" style="margin-top: 2rem;">
                 {% csrf_token %}
-                {# Renderizar solo el campo de estado del formulario #}
                 <p>
                     <label for="{{ form.estado_pedido.id_for_label }}">Estado del Pedido:</label>
                     {{ form.estado_pedido }}
                 </p>
-                
+                <p>
+                    <label for="{{ form.descripcion.id_for_label }}">Descripción del cambio:</label>
+                    {{ form.descripcion }}
+                </p>
                 <button type="submit">Actualizar Estado</button>
             </form>
+            <h2 style="width: 100%; text-align: center;">Historial de Estados</h2>
+            {% if historial %}
+                <ul class="historial-estado" style="width: 100%; text-align: center;">
+                    {% for h in historial %}
+                        <li>
+                            <strong>{{ h.estado.nombre }}</strong> - {{ h.fecha_cambio|date:"d/m/Y H:i" }}<br>
+                            <em>{{ h.descripcion }}</em>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No hay historial registrado para este pedido.</p>
+            {% endif %}
         </section>
+
     </main>
 </body>
 </html>

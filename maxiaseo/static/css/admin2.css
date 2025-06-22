@@ -27,7 +27,8 @@ body {
     display: flex;
     width: 100%;
     height: 165px;
-    background-color: seagreen;
+    background-color: #276749;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
 }
 .contenedor a {
     line-height: 165px;
@@ -38,6 +39,7 @@ body {
     text-decoration: none;
     box-sizing: border-box;
     margin-right: 30px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 .contenedor a:nth-child(2){
     margin-left: 10%;
@@ -52,7 +54,7 @@ body {
     position: relative;
     margin-left: 50px;
     margin-top: 25px;
-    margin-right: 500px;
+    margin-right: 250px;
 }
 .icono {
     width: 15px;
@@ -69,32 +71,41 @@ main {
     position: relative;
 }
 .admin-buttom .admin-drill{
-    height: 250px;
-    width: 100px;
-    background-color: seagreen;
+    display: inline-block;
+    height: 100px;
+    width: 350px;
+    background-color: white;
     text-align: center;
     line-height: 100px;
+    font-size: 1.5rem;
     padding: 60px;
     text-decoration: none;
-    color: white;
+    color: #276749;
     position: relative;
+    border: 2px solid #276749;
+    margin-bottom: 5px;
     border-radius: 16px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+    transition: transform 0.3s ease;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 .admin-drill:hover {
-    color: black;
-    background-color: #155724;
+    color: white;
+    background-color: #276749;
     
 }
 .admin-title {
-    color: white;
+    color: #123524;
     padding-top: 180px;
     text-align: center;
     font-size: 2rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 .admin-description {
-    color: white;
+    color: #123524;
     text-align: center;
     font-size: 1.5rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 .admin-container {
     position: fixed;
@@ -102,7 +113,8 @@ main {
     left: 0;
     height: 100vh;
     width: 200px;
-    background-color: seagreen;
+    background-color: #276749;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
 }
 .admin-link {
     margin-top: 0px;
@@ -115,6 +127,8 @@ main {
     text-decoration: none;
     color: white;
     font-size: 1rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 .admin-link:nth-child(1){
     margin-top: 165px;
@@ -122,10 +136,334 @@ main {
 }
 .admin-link:nth-child(2){
     color: black;
-    background-color: #155724;
+    background-color: #22543D;
 }
 .admin-link:hover {
     color: black;
-    background-color: #155724;
+    background-color: #22543D;
     
+}
+.table-container {
+    margin-top: 2rem;
+    overflow-x: auto; /* Para tablas que pueden desbordar */
+}
+
+table {
+    width: 90%;
+    margin-left: 180px;
+    border-collapse: collapse;
+    margin-bottom: 2rem;
+    background-color: rgba(255, 255, 255, 0.70);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+}
+
+th {
+    background-color: #22543D;
+    color: white;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+tr:hover {
+    background-color: #e2e2e2;
+}
+
+.action-buttons a, .action-buttons button {
+    display: inline-block;
+    padding: 8px 12px;
+    margin-right: 5px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.edit-btn {
+    background-color: #276749; /* Azul */
+    color: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.edit-btn:hover {
+    background-color: #22543D;
+}
+
+.delete-btn {
+    background-color: #276749; /* Rojo */
+    color: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.delete-btn:hover {
+    background-color: #22543D;
+}
+
+.add-button {
+    display: block;
+    width: fit-content;
+    margin: 1rem auto;
+    background-color: #276749;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 1.1rem;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.add-button:hover {
+    background-color: #22543D;
+}
+
+form {
+    background-color: #f9f9f9;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-top: 2rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+form p {
+    margin-bottom: 1rem;
+}
+
+form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    color: #333;
+}
+
+form input[type="text"],
+form input[type="email"],
+form input[type="date"],
+form input[type="password"],
+form input[type="number"],
+form select {
+    width: calc(100% - 20px); /* Ajusta el ancho para dejar espacio para el padding */
+    padding: 10px;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box; /* Incluye padding y border en el ancho total */
+}
+
+form button[type="submit"] {
+    background-color: #276749;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+    margin: 1rem auto 2rem auto;
+}
+
+form button[type="submit"]:hover {
+    background-color: #22543D;
+}
+
+.messages {
+    list-style: none;
+    padding: 10px;
+    margin-bottom: 1rem;
+    border-radius: 5px;
+}
+
+.messages li.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.messages li.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.messages li.info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+
+.detail-row {
+    margin-bottom: 1rem;
+}
+.detail-row label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 0.3rem;
+    color: #333;
+}
+.detail-row span {
+    display: block;
+    padding: 8px 10px;
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    color: #666;
+}
+.productos-en-detalle {
+    margin-top: 1.5rem;
+    border-top: 1px solid #eee;
+    padding-top: 1.5rem;
+}
+.productos-en-detalle h3 {
+    margin-bottom: 1rem;
+    color: #333;
+}
+.productos-en-detalle ul {
+    list-style: disc;
+    padding-left: 20px;
+}
+.productos-en-detalle li {
+    margin-bottom: 5px;
+}
+.productos-lista {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 0.9em;
+    color: #555;
+}
+.productos-lista li {
+    margin-bottom: 2px;
+}
+.productos-lista li:last-child {
+    margin-bottom: 0;
+}
+
+#formset {
+    margin-top: 1rem;
+}
+
+/* Cada formulario de producto dentro del formset */
+.producto-form {
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
+}
+
+/* Botón para añadir otro producto */
+#add-producto {
+    display: block;
+    margin: 0 auto 2rem auto;
+    background-color: #276749;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#add-producto:hover {
+    background-color: #22543D;
+}
+.productos-fila {
+    background-color: #f0f0f0;
+}
+
+.productos-fila ul {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding-left: 20px;
+    list-style: disc;
+}
+
+.pedido-details{
+    width: 35%;
+    padding-top: 10px;
+    padding-left: 590px;
+}
+
+.stock-alert {
+    line-height: 165px;
+    position: relative;
+    margin-right: 20px;
+}
+
+.stock-button {
+    background-color: transparent;
+    border: none;
+    color: white;
+    font-weight: bold;
+    font-size: 1.5rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    position: relative;
+}
+
+.stock-button:hover {
+    color: black;
+}
+
+.stock-count {
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    padding: 3px 7px;
+    font-size: 12px;
+    margin-left: -8px;
+    margin-top: -8px;
+    position: absolute;
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.4);
+}
+
+.stock-dropdown {
+    display: none;
+    position: absolute;
+    top: 40px;
+    left: 0;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    margin-top: 60px;
+    margin-left: -80px;
+    padding: 10px;
+    z-index: 1000;
+    min-width: 250px;
+}
+
+.stock-dropdown ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.stock-dropdown li {
+    line-height: 25px;
+    padding: 6px 10px;
+    font-size: 14px;
+    border-bottom: 1px solid #eee;
+}
+
+.stock-dropdown li:last-child {
+    border-bottom: none;
 }

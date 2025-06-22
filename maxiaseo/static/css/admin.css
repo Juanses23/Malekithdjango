@@ -28,14 +28,14 @@ body {
     /*background-image: url(../img/productosaseoanimado1.png);*/
 }
 .envio-correos{
-    padding-top: 250px;
+    padding-top: 180px;
 }
 .enviomasivo-title {
     text-align: center;
     font-size: 2rem;
     margin-bottom: 20px; /* Espacio debajo del título */
     width: 100%; /* Ocupa todo el ancho disponible para centrarse */
-    color: white;
+    color: #276749;;
 }
 
 .envio-form-container {
@@ -53,19 +53,25 @@ body {
 }
 
 .opcion-button {
-    background-color: seagreen;
-    color: white;
+    background-color: white;
+    width: 150px;
+    height: 75px;
+    color: #276749;
+    border: 2px solid #276749;
     padding: 12px 20px;
-    border: none;
     border-radius: 5px;
     cursor: pointer;
     font-size: 1rem;
     margin: 0 10px;
     transition: background-color 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+    transition: transform 0.3s ease;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .opcion-button:hover {
-    background-color: #155724;
+    background-color: #22543D;
+    color: white;
 }
 
 .mensaje-textarea {
@@ -84,7 +90,8 @@ body {
     display: flex;
     width: 100%;
     height: 165px;
-    background-color: seagreen;
+    background-color: #276749;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
 }
 .contenedor a {
     line-height: 165px;
@@ -95,6 +102,7 @@ body {
     text-decoration: none;
     box-sizing: border-box;
     margin-right: 30px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 .contenedor a:nth-child(2){
     margin-left: 10%;
@@ -109,7 +117,7 @@ body {
     position: relative;
     margin-left: 50px;
     margin-top: 25px;
-    margin-right: 500px;
+    margin-right: 250px;
 }
 .icono {
     width: 15px;
@@ -147,31 +155,39 @@ form select,
     position: relative;
 }
 .admin-buttom .admin-drill{
-    height: 250px;
-    width: 100px;
-    background-color: seagreen;
+    display: inline-block;
+    height: 100px;
+    width: 350px;
+    background-color: white;
     text-align: center;
     line-height: 100px;
     padding: 60px;
+    font-size: 1.5rem;
     text-decoration: none;
-    color: white;
+    color: #276749;
     position: relative;
+    border: 2px solid #276749;
     border-radius: 16px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+    transition: transform 0.3s ease;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 .admin-drill:hover {
     color: black;
-    background-color: #155724;
+    background-color: #276749;
 }
 .admin-title {
-    color: white;
+    color: #123524;
     padding-top: 180px;
     text-align: center;
     font-size: 2rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 .admin-description {
-    color: white;
+    color: #123524;
     text-align: center;
     font-size: 1.5rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 .admin-container {
     position: fixed;
@@ -179,7 +195,8 @@ form select,
     left: 0;
     height: 100vh;
     width: 200px;
-    background-color: seagreen;
+    background-color: #276749;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
 }
 .admin-link {
     margin-top: 0px;
@@ -192,15 +209,17 @@ form select,
     text-decoration: none;
     color: white;
     font-size: 1rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 .admin-link:nth-child(1){
     margin-top: 165px;
     color: black;
-    background-color: #155724;
+    background-color: #22543D;
 }
 .admin-link:hover {
     color: black;
-    background-color: #155724;
+    background-color: #22543D;
     
 }
 .table-container {
@@ -209,11 +228,13 @@ form select,
 }
 
 table {
-    width: 100%;
+    width: 85%;
+    margin-left: 200px;
     border-collapse: collapse;
     margin-bottom: 2rem;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     background-color: rgba(255, 255, 255, 0.70);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 th, td {
@@ -223,7 +244,7 @@ th, td {
 }
 
 th {
-    background-color: seagreen;
+    background-color: #22543D;
     color: white;
     font-weight: bold;
     text-transform: uppercase;
@@ -250,38 +271,44 @@ tr:hover {
 }
 
 .edit-btn {
-    background-color: seagreen; /* Azul */
+    background-color: #276749; /* Azul */
     color: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .edit-btn:hover {
-    background-color: darkgreen;
+    background-color: #22543D;
 }
 
 .delete-btn {
-    background-color: seagreen; /* Rojo */
+    background-color: #276749; /* Rojo */
     color: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .delete-btn:hover {
-    background-color: darkgreen;
+    background-color: #22543D;
 }
 
 .add-button {
     display: block;
     width: fit-content;
     margin: 1rem auto;
-    background-color: seagreen;
+    background-color: #276749;
     color: white;
     padding: 10px 20px;
     border-radius: 5px;
     text-decoration: none;
     font-size: 1.1rem;
     transition: background-color 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .add-button:hover {
-    background-color: darkgreen;
+    background-color: #22543D;
 }
 
 form {
@@ -321,7 +348,7 @@ form select {
 }
 
 form button[type="submit"] {
-    background-color: seagreen;
+    background-color: #276749;
     color: white;
     padding: 12px 20px;
     border: none;
@@ -332,7 +359,7 @@ form button[type="submit"] {
 }
 
 form button[type="submit"]:hover {
-    background-color: darkgreen;
+    background-color: #22543D;
 }
 
 .messages {
@@ -425,7 +452,7 @@ form button[type="submit"]:hover {
 #add-producto {
     display: block;
     margin: 0 auto 2rem auto;
-    background-color: seagreen;
+    background-color: #276749;
     color: white;
     padding: 10px 20px;
     border: none;
@@ -436,7 +463,7 @@ form button[type="submit"]:hover {
 }
 
 #add-producto:hover {
-    background-color: darkgreen;
+    background-color: #22543D;
 }
 .productos-fila {
     background-color: #f0f0f0;
@@ -447,4 +474,67 @@ form button[type="submit"]:hover {
     margin-bottom: 10px;
     padding-left: 20px;
     list-style: disc;
+}
+.stock-alert {
+    line-height: 165px;
+    position: relative;
+    margin-right: 20px;
+}
+
+.stock-button {
+    background-color: transparent;
+    border: none;
+    color: white;
+    font-weight: bold;
+    font-size: 1.5rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    position: relative;
+}
+
+.stock-button:hover {
+    color: black;
+}
+
+.stock-count {
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    padding: 3px 7px;
+    font-size: 12px;
+    margin-left: -8px;
+    margin-top: -8px;
+    position: absolute;
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.4);
+}
+
+.stock-dropdown {
+    display: none;
+    position: absolute;
+    top: 40px;
+    left: 0;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    margin-top: 60px;
+    margin-left: -80px;
+    padding: 10px;
+    z-index: 1000;
+    min-width: 250px;
+}
+
+.stock-dropdown ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.stock-dropdown li {
+    line-height: 25px;
+    padding: 6px 10px;
+    font-size: 14px;
+    border-bottom: 1px solid #eee;
+}
+
+.stock-dropdown li:last-child {
+    border-bottom: none;
 }

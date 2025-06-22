@@ -27,7 +27,8 @@ body {
     display: flex;
     width: 100%;
     height: 165px;
-    background-color: seagreen;
+    background-color: #276749;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
 }
 .contenedor a {
     line-height: 165px;
@@ -38,6 +39,7 @@ body {
     text-decoration: none;
     box-sizing: border-box;
     margin-right: 30px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 .contenedor a:nth-child(2){
     margin-left: 10%;
@@ -52,7 +54,7 @@ body {
     position: relative;
     margin-left: 50px;
     margin-top: 25px;
-    margin-right: 500px;
+    margin-right: 250px;
 }
 .icono {
     width: 15px;
@@ -80,13 +82,36 @@ main {
 }
 .admin-drill:hover {
     color: black;
-    background-color: #155724;
+    background-color: #22543D;
 }
+.select-grafica{
+    padding-top: 135px;
+    text-align: center;
+}
+select, input[type="date"] {
+    padding: 10px;
+    border: 2px solid #276749;
+    border-radius: 10px;
+    background-color: #f4f4f4;
+    color: #333;
+    font-family: 'lato', sans-serif;
+    font-weight: bold;
+    margin: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+select:focus, input[type="date"]:focus {
+    border-color: seagreen;
+    box-shadow: 0 0 5px rgba(46, 139, 87, 0.5);
+}
+
 .admin-title {
-    color: black;
-    padding-top: 180px;
+    color: #123524;
     text-align: center;
     font-size: 2rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 .admin-description {
     color: white;
@@ -99,7 +124,8 @@ main {
     left: 0;
     height: 100vh;
     width: 200px;
-    background-color: seagreen;
+    background-color: #276749;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
 }
 .admin-link {
     margin-top: 0px;
@@ -112,6 +138,8 @@ main {
     text-decoration: none;
     color: white;
     font-size: 1rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 .admin-link:nth-child(1){
     margin-top: 165px;
@@ -119,11 +147,11 @@ main {
 }
 .admin-link:nth-child(3){
     color: black;
-    background-color: #155724;
+    background-color: #22543D;
 }
 .admin-link:hover {
     color: black;
-    background-color: #155724;
+    background-color: #22543D;
     
 }
 .graficos-container {
@@ -141,20 +169,84 @@ canvas {
     height: auto !important;
 }
 .pdf-buttom{
-    background-color: seagreen;
+    background-color: white;
     border: none;
     width: 150px;
+    border: 2px solid #276749;
     height: 75px;
     text-align: center;
-    font-size: 1.2rem;
-    color: white;
+    font-size: 1.2rem;    
+    color: #276749;
     border-radius: 16px;
     margin-top: 150px;
     margin-left: 650px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 .pdf-buttom:hover {
-    background-color: #155724;
+    background-color: #276749;
     color: black;
     text-decoration: none;
     box-sizing: border-box;
+}
+
+.stock-alert {
+    line-height: 165px;
+    position: relative;
+    margin-right: 20px;
+}
+
+.stock-button {
+    background-color: transparent;
+    border: none;
+    color: white;
+    font-weight: bold;
+    font-size: 1.3rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    position: relative;
+}
+
+.stock-button:hover {
+    color: black;
+}
+
+.stock-count {
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    padding: 3px 7px;
+    font-size: 12px;
+    margin-left: -8px;
+    margin-top: -8px;
+    position: absolute;
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.4);
+}
+
+.stock-dropdown {
+    display: none;
+    position: absolute;
+    top: 40px;
+    left: 0;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    padding: 10px;
+    z-index: 1000;
+    min-width: 250px;
+}
+
+.stock-dropdown ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.stock-dropdown li {
+    padding: 6px 10px;
+    font-size: 14px;
+    border-bottom: 1px solid #eee;
+}
+
+.stock-dropdown li:last-child {
+    border-bottom: none;
 }

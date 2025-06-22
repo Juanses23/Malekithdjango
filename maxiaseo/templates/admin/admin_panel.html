@@ -17,6 +17,7 @@
     <header>
         <nav class="contenedor">
             <img src="{% static 'icon/MALEKITH-1.png' %}" alt="logo" class="logo">
+            
             {% if request.session.user_name %}
                 <a class="welcome-message">Hola Admin, {{ request.session.user_name }}</a>
                 <a href="{% url 'logout' %}" class="logout-button">Cerrar sesión</a>
@@ -25,6 +26,24 @@
     </header>
 
     <main>
+        <div class="select-grafica">
+            <!-- Filtros para el gráfico de pastel -->
+            <label for="top_n">Mostrar:</label>
+            <select id="top_n" onchange="actualizarGraficos()">
+                <option value="3" {% if top_n == "3" %}selected{% endif %}>Top 3 productos</option>
+                <option value="5" {% if top_n == "5" %}selected{% endif %}>Top 5 productos</option>
+                <option value="10" {% if top_n == "10" %}selected{% endif %}>Top 10 productos</option>
+                <option value="all" {% if top_n == "all" %}selected{% endif %}>Todos</option>
+            </select>
+
+            <!-- Filtros para gráfico de líneas -->
+            <label for="fecha_inicio">Desde:</label>
+            <input type="date" id="fecha_inicio" onchange="actualizarGraficos()" value="{{ fecha_inicio|default:'' }}">
+            <label for="fecha_fin">Hasta:</label>
+            <input type="date" id="fecha_fin" onchange="actualizarGraficos()" value="{{ fecha_fin|default:'' }}">
+
+        </div>
+
         <section class="admin-buttom">
             <h2 class="admin-title">Gráfico de Productos Vendidos y Ventas por Día</h2>
             <div class="graficos-container">
@@ -43,6 +62,18 @@
     </main>
 
     <script>
+        function actualizarGraficos() {
+            const topN = document.getElementById('top_n').value;
+            const fechaInicio = document.getElementById('fecha_inicio').value;
+            const fechaFin = document.getElementById('fecha_fin').value;
+
+            const url = new URL(window.location.href);
+            url.searchParams.set('top_n', topN);
+            if (fechaInicio) url.searchParams.set('fecha_inicio', fechaInicio);
+            if (fechaFin) url.searchParams.set('fecha_fin', fechaFin);
+
+            window.location.href = url.toString();
+        }
         // Gráfico de pastel
         const ctxPastel = document.getElementById('graficoPastel').getContext('2d');
         new Chart(ctxPastel, {
@@ -53,12 +84,12 @@
                     label: 'Productos Vendidos',
                     data: {{ data_pastel|safe }},
                     backgroundColor: [
-                        'rgba(255, 99, 132, 0.5)',
-                        'rgba(54, 162, 235, 0.5)',
-                        'rgba(255, 206, 86, 0.5)',
-                        'rgba(75, 192, 192, 0.5)',
-                        'rgba(153, 102, 255, 0.5)',
-                        'rgba(255, 159, 64, 0.5)'
+                        'rgba(46, 139, 87, 0.5)',
+                        'rgba(102, 205, 170, 0.5)',
+                        'rgba(18, 53, 36, 0.5)',
+                        'rgba(152, 251, 152, 0.5)',
+                        'rgba(193, 225, 193, 0.5)',
+                        'rgba(39, 103, 73, 0.5)'
                     ],
                     borderWidth: 1
                 }]
@@ -75,8 +106,8 @@
                     label: 'Ventas por Día',
                     data: {{ data_linea|safe }},
                     fill: true,
-                    backgroundColor: 'rgba(75,192,192,0.2)',
-                    borderColor: 'rgba(75,192,192,1)',
+                    backgroundColor: 'rgba(60,179,113,0.2)',
+                    borderColor: 'rgba(46,139,87,1)',
                     tension: 0.1
                 }]
             }
@@ -86,27 +117,46 @@
         function descargarPDF() {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
+            const logo = new Image();
+            logo.src = "{% static 'icon/MALEKITH-1.png' %}"; // Ajusta la ruta si cambia
+            logo.onload = () => {
+                setTimeout(() => {
+                    try {
+                        const canvasPastel = document.getElementById('graficoPastel');
+                        const canvasLineas = document.getElementById('graficoLineas');
 
-            setTimeout(() => {
-                try {
-                    const canvasPastel = document.getElementById('graficoPastel');
-                    const canvasLineas = document.getElementById('graficoLineas');
+                        const imgPastel = canvasPastel.toDataURL("image/png");
+                        const imgLineas = canvasLineas.toDataURL("image/png");
 
-                    const imgPastel = canvasPastel.toDataURL("image/png");
-                    const imgLineas = canvasLineas.toDataURL("image/png");
+                        // --- Página 1 ---
+                        doc.setFillColor(39, 103, 73); // Verde seagreen (#276749)
+                        doc.rect(0, 0, 210, 20, 'F'); // Fondo en la parte superior
 
-                    doc.text("Gráfico de Productos Vendidos", 10, 10);
-                    doc.addImage(imgPastel, 'PNG', 10, 20, 180, 100);
+                        doc.addImage(logo, 'PNG', 10, 2, 20, 15); // Logo (x, y, width, height)
+                        doc.setTextColor(255, 255, 255);
+                        doc.setFontSize(14);
+                        doc.text("Gráfico de Productos Vendidos", 35, 12);
 
-                    doc.addPage();
-                    doc.text("Ventas por Día", 10, 10);
-                    doc.addImage(imgLineas, 'PNG', 10, 20, 180, 100);
+                        doc.addImage(imgPastel, 'PNG', 10, 30, 160, 100);
 
-                    doc.save("reporte_ventas.pdf");
-                } catch (error) {
-                    alert("Error al generar PDF: " + error.message);
-                }
-            }, 500); // Espera a que se generen las gráficas
+                        // --- Página 2 ---
+                        doc.addPage();
+
+                        doc.setFillColor(39, 103, 73);
+                        doc.rect(0, 0, 210, 20, 'F');
+                        doc.addImage(logo, 'PNG', 10, 2, 20, 15);
+                        doc.setTextColor(255, 255, 255);
+                        doc.setFontSize(14);
+                        doc.text("Ventas por Día", 35, 12);
+
+                        doc.addImage(imgLineas, 'PNG', 10, 30, 180, 100);
+
+                        doc.save("reporte_ventas.pdf");
+                    } catch (error) {
+                        alert("Error al generar PDF: " + error.message);
+                    }
+                }, 500); // Espera a que se rendericen las gráficas
+            };
         }
     </script>
 </body>

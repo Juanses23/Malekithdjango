@@ -7,25 +7,19 @@
     {% load static %} {# Carga de archivos estáticos en Django #}
     <link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}">
     <link rel="icon" href="{% static 'icon/Malekith.png' %}" type="image/x-icon">
-    <style type="text/css">
-        body {
-            background-image: url("{% static 'img/productosaseoanimado3.png' %}");
-            background-size: cover;       /* Ajusta la imagen al tamaño de la ventana */
-            background-repeat: no-repeat; /* Evita que se repita */
-            background-position: center;  /* Centra la imagen */
-        }
-        .box {
-            border-color: var(--glass-bg-col);
-            border: 1px solid #26874E;
-            padding: 40px 50px;
-            border-radius: 20px;
-            backdrop-filter: var(--blur);
-            background-color: rgba(255, 255, 255, 0.70);
-        }
-    </style>
+    
 </head>
 <body>
-    <a href="{% url 'login' %}" class="volver">Volver</a>
+    <header>
+        <nav class="contenedor">
+            <img src="{% static 'icon/MALEKITH-1.png' %}" alt="logo" class="logo">
+            <div class="btn-index">
+                <a href="{% url 'login' %}">Volver</a>
+                
+            </div>
+            
+        </nav>
+    </header>
     <section class="form-main">
         <div class="form-content">
             <div class="box">

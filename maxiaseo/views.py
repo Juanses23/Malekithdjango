@@ -8,9 +8,10 @@ from django.utils import timezone
 from django.db.models import Sum
 from django.db.models import Prefetch
 from django.forms import modelformset_factory
+from django.utils.dateparse import parse_date
 
 from .forms import FormularioLogin,UsuarioForm,ProductoForm,CategoriaForm,PedidoForm,ProveedorForm,EntradaProductoForm,PedidoUpdateForm,EntradaProductoDetalleForm
-from .models import Producto,Venta,Usuario,Categoria,Pedido,PedidoProductos,Proveedor,Administrador,EntradaProducto,EntradaProductoDetalle
+from .models import Producto,Venta,Usuario,Categoria,Pedido,PedidoProductos,Proveedor,Administrador,EntradaProducto,EntradaProductoDetalle,HistorialEstadoPedido,Estado
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail, BadHeaderError, EmailMessage
 from django.conf import settings
@@ -61,7 +62,8 @@ def pedidos(request):
         return redirect('login')
 
     pedidos = Pedido.objects.filter(cedula=usuario).prefetch_related(
-        Prefetch('productos', queryset=PedidoProductos.objects.select_related('id_producto'))
+        Prefetch('productos', queryset=PedidoProductos.objects.select_related('id_producto')),
+        Prefetch('historial_estados', queryset=HistorialEstadoPedido.objects.select_related('estado').order_by('-fecha_cambio'))
     ).order_by('-fecha_Creacion')
 
     return render(request, 'usuario/pedidos.html', {'pedidos': pedidos})
@@ -281,9 +283,11 @@ def realizar_compra(request):
     usuario = get_object_or_404(Usuario, pk=user_id)
     total = sum(Decimal(item['precio']) * item['cantidad'] for item in carrito.values())
 
+    estado_pendiente = get_object_or_404(Estado, nombre='Pendiente')
+
     pedido = Pedido.objects.create(
         fecha_Creacion=timezone.now(),
-        estado_pedido='Pendiente',
+        estado_pedido=estado_pendiente,
         total_pedido=total,
         cedula=usuario,
         metodo=metodo
@@ -459,23 +463,47 @@ def restablecer_contrasena_view(request):
     return render(request, 'restablecer_contrasena.html', {'email': email_recuperacion})
 
 def admin_view(request):
-    return render(request, 'admin/admin.html')
+    productos_bajo_stock = Producto.objects.filter(cantidad_producto__lt=10)
+    return render(request, 'admin/admin.html', {
+        'productos_bajo_stock': productos_bajo_stock,
+        'total_bajo_stock': productos_bajo_stock.count()
+    })
+
 def admin_view2(request):
-    return render(request, 'admin/admin_2.html')
+    productos_bajo_stock = Producto.objects.filter(cantidad_producto__lt=10)
+
+    return render(request, 'admin/admin_2.html', {
+        'productos_bajo_stock': productos_bajo_stock,
+        'total_bajo_stock': productos_bajo_stock.count()
+    })
+
 def panel_admin(request):
-    # Datos para gráfica de pastel
+    top_n = request.GET.get('top_n', '10')
+    fecha_inicio = request.GET.get('fecha_inicio')
+    fecha_fin = request.GET.get('fecha_fin')
+
+    # Filtro por fecha
+    ventas = Venta.objects.all()
+    if fecha_inicio:
+        ventas = ventas.filter(fecha_venta__gte=parse_date(fecha_inicio))
+    if fecha_fin:
+        ventas = ventas.filter(fecha_venta__lte=parse_date(fecha_fin))
+
+    # Datos para gráfico de pastel (productos vendidos)
     ventas_por_producto = (
-        Venta.objects
-        .values('producto__descripcion_producto')
+        ventas.values('producto__descripcion_producto')
         .annotate(total_vendido=Sum('cantidad_vendida'))
+        .order_by('-total_vendido')
     )
+    if top_n != 'all':
+        ventas_por_producto = ventas_por_producto[:int(top_n)]
+
     labels_pastel = [v['producto__descripcion_producto'] for v in ventas_por_producto]
     data_pastel = [v['total_vendido'] for v in ventas_por_producto]
 
-    # Datos para gráfica de líneas por fecha
+    # Datos para gráfico de líneas (ventas por fecha)
     ventas_por_fecha = (
-        Venta.objects
-        .values('fecha_venta')
+        ventas.values('fecha_venta')
         .annotate(total_vendido=Sum('cantidad_vendida'))
         .order_by('fecha_venta')
     )
@@ -483,10 +511,13 @@ def panel_admin(request):
     data_linea = [v['total_vendido'] for v in ventas_por_fecha]
 
     context = {
-        'labels_pastel': json.dumps(labels_pastel),
-        'data_pastel': json.dumps(data_pastel),
-        'labels_linea': json.dumps(labels_linea),
-        'data_linea': json.dumps(data_linea),
+    'labels_pastel': json.dumps(labels_pastel),
+    'data_pastel': json.dumps(data_pastel),
+    'labels_linea': json.dumps(labels_linea),
+    'data_linea': json.dumps(data_linea),
+    'top_n': top_n,
+    'fecha_inicio': fecha_inicio,
+    'fecha_fin': fecha_fin,
     }
     return render(request, 'admin/admin_panel.html', context)
 def admin_usuarios_view(request):
@@ -661,39 +692,51 @@ def pedido_create(request):
     return render(request, 'admin/pedido/pedido_form.html', {'form': form, 'title': 'Crear Pedido'})
 
 def pedido_update(request, pk):
-    """
-    Permite editar un pedido existente, solo el estado del pedido.
-    """
     pedido = get_object_or_404(Pedido, pk=pk)
+
     if request.method == 'POST':
         form = PedidoUpdateForm(request.POST, instance=pedido)
+        print(request.POST)
         if form.is_valid():
-            form.save()
-            messages.success(request, f'Estado del Pedido #{pedido.id_pedido} actualizado exitosamente.')
-            return redirect('admin_pedidos') # O 'pedido_list', según tu configuración de URL
+            nuevo_estado = form.cleaned_data['estado_pedido']
+            descripcion = form.cleaned_data['descripcion']
+            estado_anterior = pedido.estado_pedido
+
+            # Actualiza el pedido
+            pedido.estado_pedido = nuevo_estado
+            pedido.save()
+
+            # Siempre guarda en historial
+            HistorialEstadoPedido.objects.create(
+                pedido=pedido,
+                estado=nuevo_estado,
+                descripcion=descripcion
+            )
+
+            messages.success(request, f'Estado actualizado correctamente.')
+            return redirect('admin_pedidos')
         else:
-            messages.error(request, 'Hubo un error al actualizar el estado del pedido. Por favor, revisa los datos.')
+            messages.error(request, 'Formulario inválido')
     else:
         form = PedidoUpdateForm(instance=pedido)
-    
-    # ¡CAMBIO AQUÍ! Usa 'productos' en lugar de 'productos_en_pedido'
-    productos_en_pedido_data = [] # Lista para almacenar los productos con su subtotal
+
+    productos_en_pedido_data = []
     for pp in pedido.productos.select_related('id_producto'):
-        subtotal = None
-        if pp.id_producto.valor_producto and pp.cantidad:
-            subtotal = pp.id_producto.valor_producto * pp.cantidad
+        subtotal = pp.id_producto.valor_producto * pp.cantidad if pp.id_producto.valor_producto and pp.cantidad else None
         productos_en_pedido_data.append({
             'producto': pp.id_producto,
             'cantidad': pp.cantidad,
-            'subtotal': subtotal # Añadir el subtotal aquí
+            'subtotal': subtotal
         })
+
+    historial = pedido.historial_estados.select_related('estado').order_by('-fecha_cambio')
 
     return render(request, 'admin/pedido/pedido_form.html', {
         'form': form,
         'title': f'Editar Pedido #{pedido.id_pedido}',
         'pedido_obj': pedido,
-        'productos_en_pedido': productos_en_pedido_data, # Pasamos la nueva lista
-        'read_only_fields': ['total_pedido', 'cedula']
+        'productos_en_pedido': productos_en_pedido_data,
+        'historial': historial
     })
 def pedido_delete(request, pk):
     """
@@ -777,7 +820,7 @@ def admin_entradas_view(request):
         'totales': totales
     })
 def entrada_create(request):
-    DetalleFormSet = modelformset_factory(EntradaProductoDetalle, form=EntradaProductoDetalleForm, extra=1, can_delete=True)
+    DetalleFormSet = modelformset_factory(EntradaProductoDetalle, form=EntradaProductoDetalleForm, extra=1)
 
     if request.method == 'POST':
         entrada_form = EntradaProductoForm(request.POST)

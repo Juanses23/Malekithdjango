@@ -39,6 +39,23 @@
                                     {% endfor %}
                                 </ul>
                                 <p><strong>Método de pago:</strong> {{ pedido.metodo|capfirst }}</p>
+
+                                {% if pedido.historial_estados.all %}
+                                    <div class="historial-estado">
+                                        
+                                        <strong>Historial de Estados:</strong>
+                                        <ul>
+                                            {% for h in pedido.historial_estados.all %}
+                                                <li>
+                                                    <strong>{{ h.estado.nombre }}</strong> - {{ h.fecha_cambio|date:"d/m/Y H:i" }}<br>
+                                                    <em>{{ h.descripcion }}</em>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                {% else %}
+                                    <p>No hay historial de estado para este pedido.</p>
+                                {% endif %}
                             </td>
                         </tr>
                     {% endfor %}

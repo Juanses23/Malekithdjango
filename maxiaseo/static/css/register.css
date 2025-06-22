@@ -117,7 +117,7 @@ a{
 }
 .form-content {
     width: 100%;
-    max-width: 450px;
+    max-width: 900px;
     position: relative;
     z-index: 1;
 }
@@ -132,7 +132,7 @@ a{
     margin: 25px 0 20px;
 }
 .form-content .input-box{
-    margin: 25px;
+    margin: 10px 0;
 }
 .form-content ::placeholder{
     color: inherit;

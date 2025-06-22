@@ -12,18 +12,27 @@
     <header>
         <nav class="contenedor">
             <img src="{% static 'icon/MALEKITH-1.png' %}" alt="logo" class="logo">
-            <a href="{% url 'inicio' %}">Inicio</a>
-            <a href="{% url 'nuestra_empresa' %}">Nuestra empresa</a>
-            <a href="{% url 'productos' %}">Tienda</a>
-            {% if request.session.user_name %}
+            <div class="btn-index">
+                <a href="{% url 'inicio' %}">Inicio</a>
+                <a href="{% url 'nuestra_empresa' %}">Nuestra empresa</a>
+                <a href="{% url 'productos' %}">Tienda</a>
                 
-                <a href="{% url 'logout' %}" class="logout-button">Cerrar sesión</a>
-                <a href="#" id="userMenuToggle">Hola, {{ request.session.user_name }}</a>
-                <a href="{% url 'perfil' %}">Perfil</a>
-                <a href="{% url 'pedidos' %}">Pedidos</a>
-            {% else %}
-                <a href="{% url 'login' %}">Iniciar sesión</a>
-            {% endif %}
+            </div>
+            <div class="btn-inicio">
+                
+                {% if request.session.user_name %}
+                    <a href="#" id="userMenuToggle">Hola, {{ request.session.user_name }}</a>
+                    <a href="{% url 'perfil' %}">Perfil</a>
+                    <a href="{% url 'pedidos' %}">Pedidos</a>
+                    <a href="{% url 'logout' %}" class="logout-button">Cerrar sesión</a>
+                    
+                    
+                {% else %}
+                    <a href="{% url 'login' %}">Iniciar sesión</a>
+                {% endif %}
+                
+            </div>
+            
         </nav>
     </header>
     <section>
