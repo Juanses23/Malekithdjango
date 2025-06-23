@@ -76,11 +76,11 @@ WSGI_APPLICATION = 'malekith.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'malekithdj',
+        'NAME': 'railway',
         'USER': 'root',
-        'PASSWORD': '',
-        'HOST': 'localhost',
-        'PORT': '3306',
+        'PASSWORD': 'SFwPKiZqzpqzAOwnYMpzNjfQqamJzQsc',
+        'HOST': 'shuttle.proxy.rlwy.net',
+        'PORT': '42779',
     }
 }
 
