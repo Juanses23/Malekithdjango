@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
+import os
 
 from pathlib import Path
 
@@ -20,15 +21,19 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-yv#1$$-_6h)s-n_bjrlcwre_e!-xxt4a#8ps3wjtcn7h^^t8l@'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-yv#1$$-_6h)s-n_bjrlcwre_e!-xxt4a#8ps3wjtcn7h^^t8l@')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG_VALUE', 'True') == 'True' # Convierte el string 'True'/'False' a booleano
 
-ALLOWED_HOSTS = ['malekithdjango.onrender.com']
-
+ALLOWED_HOSTS = ['malekithdjango.onrender.com', '127.0.0.1']
+if not DEBUG:
+    STATIC_ROOT = BASE_DIR / 'static'
 
 # Application definition
+CSRF_TRUSTED_ORIGINS = [
+    "https://malekithdjango.onrender.com",
+]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -59,6 +64,7 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
@@ -124,8 +130,6 @@ STATICFILES_DIRS = [ BASE_DIR / 'static' ]
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
-
-STATICFILES_DIRS = [ BASE_DIR / 'maxiaseo/static' ]
 
 
 # Default primary key field type

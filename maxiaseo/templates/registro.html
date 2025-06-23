@@ -25,7 +25,7 @@
             <div class="box">
                 <h3>Crea tu cuenta</h3>
                 <form action="{% url 'registro' %}" method="POST">
-                    {% csrf_token %} {# ¡Importante! Token CSRF para seguridad en Django #}
+                    {% csrf_token %}
                     <input type="hidden" name="accion" value="registro">
                     
                     {# Mostrar mensajes de error o éxito #}
