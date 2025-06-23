@@ -368,7 +368,7 @@ def olvido_contrasena_view(request):
                 'Por favor, ingresa este código en la siguiente pantalla para restablecer tu contraseña.\n'
                 'Si no solicitaste esto, puedes ignorar este correo.\n\n'
                 'Saludos,\n'
-                'El equipo de [Nombre de tu Empresa/Servicio]'
+                'El equipo de Malekith'
             )
             from_email = settings.EMAIL_HOST_USER
             recipient_list = [email]

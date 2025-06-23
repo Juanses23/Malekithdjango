@@ -27,6 +27,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-yv#1$$-_6h)s-n_bjrlcw
 DEBUG = os.environ.get('DEBUG_VALUE', 'True') == 'True' # Convierte el string 'True'/'False' a booleano
 
 ALLOWED_HOSTS = ['malekithdjango.onrender.com', '127.0.0.1']
+
 if not DEBUG:
     STATIC_ROOT = BASE_DIR / 'static'
 
