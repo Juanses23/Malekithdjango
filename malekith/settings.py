@@ -144,3 +144,4 @@ EMAIL_PORT = 587             # O el puerto de tu proveedor (ej. 465 para SSL)
 EMAIL_USE_TLS = True         # Usa TLS (Transport Layer Security)
 EMAIL_HOST_USER = 'codenova856@gmail.com' # Tu dirección de correo
 EMAIL_HOST_PASSWORD = 'epnrxwcmdoujiaft' # Tu contraseña o una contraseña de aplicación
+DEFAULT_FROM_EMAIL = 'MAXIASEO <codenova856@gmail.com>'
