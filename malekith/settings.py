@@ -24,9 +24,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-yv#1$$-_6h)s-n_bjrlcwre_e!-xxt4a#8ps3wjtcn7h^^t8l@')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False # Convierte el string 'True'/'False' a booleano
+DEBUG = os.environ.get('DEBUG_VALUE', 'True') == 'True' # Convierte el string 'True'/'False' a booleano
 
 ALLOWED_HOSTS = ['malekithdjango.onrender.com', '127.0.0.1']
+if not DEBUG:
+    STATIC_ROOT = BASE_DIR / 'static'
 
 # Application definition
 CSRF_TRUSTED_ORIGINS = [
