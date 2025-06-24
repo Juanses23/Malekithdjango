@@ -169,3 +169,60 @@ input[type="submit"]:hover {
 .exito-container a:hover {
     background-color: #276749;
 }
+.select-metodo:hover {
+    background-color: #f0f0f0; /* Un gris muy claro al pasar el ratón */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra al pasar el ratón */
+}
+
+/* Estilo para los radio buttons dentro de los select-metodo */
+.select-metodo input[type="radio"] {
+    -webkit-appearance: none; /* Oculta la apariencia por defecto del radio button */
+    -moz-appearance: none;
+    appearance: none;
+    width: 20px; /* Tamaño del círculo */
+    height: 20px; /* Tamaño del círculo */
+    border: 2px solid #276749; /* Borde del círculo */
+    border-radius: 50%; /* Hacerlo circular */
+    margin-right: 15px; /* Espacio entre el radio y el texto */
+    position: relative;
+    cursor: pointer;
+    flex-shrink: 0; /* Evita que el radio button se encoja */
+}
+
+/* Estilo cuando el radio button está seleccionado */
+.select-metodo input[type="radio"]:checked {
+    background-color: #276749; /* Color de relleno cuando está seleccionado */
+    border-color: #276749; /* Color del borde cuando está seleccionado */
+}
+
+/* Punto central cuando el radio button está seleccionado */
+.select-metodo input[type="radio"]:checked::before {
+    content: '';
+    display: block;
+    width: 8px; /* Tamaño del punto central */
+    height: 8px; /* Tamaño del punto central */
+    background-color: white; /* Color del punto central */
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.select-metodo {
+    /* Ajustes para los botones de selección (Métodos de Pago) */
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 90%; /* Más ancho */
+    max-width: 500px; /* Limita el ancho máximo para que no se extienda demasiado */
+    height: 55px; /* Más largo */
+    background-color: #FFFFFF; /* Fondo blanco completo */
+    color: #333; /* Color de texto más oscuro para contraste */
+    border-radius: 12px;
+    padding: 0 20px; /* Ajusta el padding para el texto dentro del botón */
+    margin: 0 auto 20px auto; /* Centrar y dar más espacio entre ellos */
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Añadir transición para sombra */
+    border: 1px solid #ddd; /* Un borde sutil para que destaquen */
+    font-size: 1.1rem; /* Aumentar tamaño de fuente */
+}

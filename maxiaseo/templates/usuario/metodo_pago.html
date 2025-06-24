@@ -10,17 +10,17 @@
     <a href="{% url 'carrito_view' %}" class="volver">Volver al carrito</a>
     <h1>Selecciona un método de pago</h1>
 
-    <form method="post">
+    <form method="post" class="form-metodo"> {# Agregamos la clase form-metodo aquí #}
         {% csrf_token %}
-        <label>
+        <label class="select-metodo"> {# Aplicamos select-metodo a cada label #}
             <input type="radio" name="metodo" value="efectivo" checked> Efectivo
-        </label><br>
-        <label>
+        </label>
+        <label class="select-metodo"> {# Aplicamos select-metodo a cada label #}
             <input type="radio" name="metodo" value="tarjeta"> Tarjeta
-        </label><br>
-        <label>
+        </label>
+        <label class="select-metodo"> {# Aplicamos select-metodo a cada label #}
             <input type="radio" name="metodo" value="pse"> PSE
-        </label><br><br>
+        </label><br>
         <input type="submit" value="Continuar con la compra">
     </form>
 </body>
