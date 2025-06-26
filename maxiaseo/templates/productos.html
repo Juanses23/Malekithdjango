@@ -18,15 +18,15 @@
                 <a href="{% url 'inicio' %}">Inicio</a>
                 <a href="{% url 'nuestra_empresa' %}">Nuestra empresa</a>
                 <a href="{% url 'productos' %}">Tienda</a>
+                
+            </div>
+            <div class="btn-inicio">
                 <a href="{% url 'carrito_view' %}" class="carrito-icono">
                     <img src="{% static 'icon/carrito-white.png' %}" alt="Carrito">
                     {% if total_items_carrito > 0 %}
                         <span class="contador-carrito">{{ total_items_carrito }}</span>
                     {% endif %}
                 </a>
-            </div>
-            <div class="btn-inicio">
-                
                 {% if request.session.user_name %}
                     <a href="#" id="userMenuToggle">Hola, {{ request.session.user_name }}</a>
                     <a href="{% url 'perfil' %}">Perfil</a>

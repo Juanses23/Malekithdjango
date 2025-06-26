@@ -17,11 +17,13 @@
     <header>
         <nav class="contenedor">
             <img src="{% static 'icon/MALEKITH-1.png' %}" alt="logo" class="logo">
+            <div class="btn-index">
+                {% if request.session.user_name %}
+                    <a class="welcome-message">Admin {{ request.session.user_name }}</a>
+                    <a href="{% url 'logout' %}" class="logout-button">Cerrar sesión</a>
+                {% endif %}
+            </div>
             
-            {% if request.session.user_name %}
-                <a class="welcome-message">Hola Admin, {{ request.session.user_name }}</a>
-                <a href="{% url 'logout' %}" class="logout-button">Cerrar sesión</a>
-            {% endif %}
         </nav>
     </header>
 

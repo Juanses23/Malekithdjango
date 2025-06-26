@@ -5,18 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% load static %}
     <title>{{ title }}</title>
-    <link rel="stylesheet" href="{% static 'css/admin.css2' %}">
+    <link rel="stylesheet" href="{% static 'css/admin2.css' %}">
     <link rel="icon" href="{% static 'icon/Malekith.png' %}" type="image/x-icon">
 </head>
 <body>
     <header>
         <nav class="contenedor">
             <img src="{% static 'icon/MALEKITH-1.png' %}" alt="logo" class="logo">
-            {% if request.session.user_name %}
-                <a class="welcome-message">Hola Admin, {{ request.session.user_name }}</a>
-                <a href="{% url 'logout' %}" class="logout-button">Cerrar sesión</a>
-            {% endif %}
-            <a href="{% url 'admin_productos' %}">Volver a Productos</a>
+            <div class="btn-index">
+                {% if request.session.user_name %}
+                    <a class="welcome-message">Admin {{ request.session.user_name }}</a>
+                    <a href="{% url 'logout' %}" class="logout-button">Cerrar sesión</a>
+                {% endif %}
+            </div>
         </nav>
     </header>
     <main>

@@ -13,11 +13,13 @@
     <header>
         <nav class="contenedor">
             <img src="{% static 'icon/MALEKITH-1.png' %}" alt="logo" class="logo">
-            {% if request.session.user_name %}
-                <a class="welcome-message">Hola Admin, {{ request.session.user_name }}</a>
-                <a href="{% url 'logout' %}" class="logout-button">Cerrar sesión</a>
-            {% endif %}
-            <a href="{% url 'admin_view' %}">Volver</a>
+            <div class="btn-index">
+                {% if request.session.user_name %}
+                    <a class="welcome-message">Admin {{ request.session.user_name }}</a>
+                    <a href="{% url 'logout' %}" class="logout-button">Cerrar sesión</a>
+                {% endif %}
+            </div>
+            
             
             
         </nav>
@@ -67,10 +69,7 @@
                             <td>{{ usuario.id_administrador.nombre|default_if_none:"N/A" }}</td>
                             <td class="action-buttons">
                                 <a href="{% url 'usuario_update' usuario.cedula %}" class="edit-btn" style="padding: 13px 26px;">Editar</a>
-                                <form action="{% url 'usuario_delete' usuario.cedula %}" method="post" style="display:inline; padding: 0;">
-                                    {% csrf_token %}
-                                    <button type="submit" class="delete-btn" onclick="return confirm('¿Estás seguro de que quieres eliminar a este usuario?')">Eliminar</button>
-                                </form>
+                                
                             </td>
                         </tr>
                         {% empty %}

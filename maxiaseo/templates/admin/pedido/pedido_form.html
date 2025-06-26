@@ -13,11 +13,12 @@
     <header>
         <nav class="contenedor">
             <img src="{% static 'icon/MALEKITH-1.png' %}" alt="logo" class="logo">
-            {% if request.session.user_name %}
-                <a class="welcome-message">Hola Admin, {{ request.session.user_name }}</a>
-                <a href="{% url 'logout' %}" class="logout-button">Cerrar sesión</a>
-            {% endif %}
-            <a href="{% url 'admin_pedidos' %}">Volver a Pedidos</a>
+            <div class="btn-index">
+                {% if request.session.user_name %}
+                    <a class="welcome-message">Admin {{ request.session.user_name }}</a>
+                    <a href="{% url 'logout' %}" class="logout-button">Cerrar sesión</a>
+                {% endif %}
+            </div>
         </nav>
     </header>
     <main>
@@ -31,13 +32,6 @@
             <h1 class="admin-title">{{ title }}</h1>
             <p class="admin-description">Desde aquí puedes editar el estado del pedido y ver sus detalles.</p>
 
-            {% if messages %}
-                <ul class="messages" style="width: 100%; text-align: center;">
-                    {% for message in messages %}
-                        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
 
             {# Mostrar detalles del pedido (solo lectura) #}
             {% if pedido_obj %}
@@ -102,7 +96,7 @@
                     {% endfor %}
                 </ul>
             {% else %}
-                <p>No hay historial registrado para este pedido.</p>
+                <p class="historial-estado" style="width: 100%; text-align: center;">No hay historial registrado para este pedido.</p>
             {% endif %}
         </section>
 

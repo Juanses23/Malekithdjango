@@ -12,27 +12,29 @@
     <header>
         <nav class="contenedor">
             <img src="{% static 'icon/MALEKITH-1.png' %}" alt="logo" class="logo">
-            <div class="stock-alert">
-                <button id="toggleStockDropdown" class="stock-button">
-                    Bajo stock 
-                    {% if total_bajo_stock > 0 %}
-                    <span class="stock-count">{{ total_bajo_stock }}</span>
-                    {% endif %}
-                </button>
-                <div id="stockDropdown" class="stock-dropdown" style="display: none;">
-                    <ul>
-                        {% for producto in productos_bajo_stock %}
-                            <li>{{ producto.descripcion_producto }} ({{ producto.cantidad_producto }} productos)</li>
-                        {% empty %}
-                            <li>No hay productos con bajo stock</li>
-                        {% endfor %}
-                    </ul>
+            <div class="btn-index">
+                <div class="stock-alert">
+                    <button id="toggleStockDropdown" class="stock-button">
+                        Bajo stock 
+                        {% if total_bajo_stock > 0 %}
+                        <span class="stock-count">{{ total_bajo_stock }}</span>
+                        {% endif %}
+                    </button>
+                    <div id="stockDropdown" class="stock-dropdown" style="display: none;">
+                        <ul>
+                            {% for producto in productos_bajo_stock %}
+                                <li>{{ producto.descripcion_producto }} ({{ producto.cantidad_producto }} productos)</li>
+                            {% empty %}
+                                <li>No hay productos con bajo stock</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
                 </div>
+                {% if request.session.user_name %}
+                    <a class="welcome-message">Admin {{ request.session.user_name }}</a>
+                    <a href="{% url 'logout' %}" class="logout-button">Cerrar sesión</a>
+                {% endif %}
             </div>
-            {% if request.session.user_name %}
-                <a class="welcome-message">Hola Admin, {{ request.session.user_name }}</a>
-                <a href="{% url 'logout' %}" class="logout-button">Cerrar sesión</a>
-            {% endif %}
         </nav>
     </header>
     <main>

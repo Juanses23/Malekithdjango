@@ -18,24 +18,37 @@ body {
     font-family: 'lato', sans-serif;
     font-weight: bold;
     background: white;
+    height: 100%;
 }
 .contenedor {
     background-color: #276749;
     display: flex;
     width: 100%;
-    height: 165px;
+    height: 150px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
 }
 .contenedor a {
-    line-height: 165px;
-    font-size: 1.5rem;
+    line-height: 150px;
+    font-size: 1.2rem;
     color: white;
     list-style: none;
     transition: background-color 0.3s ease;
     text-decoration: none;
     box-sizing: border-box;
-    margin-right: 30px;
-    
+    font-weight: 500;
+}
+.btn-index{
+  gap: 30px;
+  width: 45%;
+  display: flex;
+  margin-left: 80px;
+}
+.btn-inicio{
+  gap: 30px;
+  width: 45%;
+  display: flex;
+  justify-content: flex-end;
+  margin-right: 50px;
 }
 .contenedor .btn-index a:nth-child(3){
     color: black;
@@ -49,8 +62,7 @@ body {
     height: 120px;
     position: relative;
     margin-left: 50px;
-    margin-top: 25px;
-    margin-right: 250px;
+    margin-top: 15px;
 }
 .icono {
     width: 15px;
@@ -61,12 +73,15 @@ body {
 main {
     /*background-image: url('../img/productosaseoanimado1.png');*/
     padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    min-height: 59vh;
 }
 
 .filter-buttons {
     display: flex;
     justify-content: left;
-    margin-bottom: 1rem;
+    margin-bottom: 2rem;
     gap: 0.5rem;
     
 }
@@ -279,8 +294,8 @@ footer {
     background-color: #276749;
     color: white;
     width: 100%;
-    height: 165px;
-    padding-top: 35px;
+    height: 150px;
+    padding-top: 25px;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
